@@ -1,0 +1,53 @@
+[project]
+name = "maalfrid_toolkit"
+version = "1.0.0"
+description = "Toolkit for the Målfrid project"
+authors = [
+    {name = "Magnus Breder Birkenes", email = "magnus.birkenes@nb.no"},
+]
+dependencies = [
+    "beautifulsoup4==4.12.3",
+    "certifi==2024.8.30",
+    "charset-normalizer==3.4.0",
+    "faust-cchardet==2.1.19",
+    "gielladetect==1.0.3",
+    "html5lib==1.1",
+    "idna==3.10",
+    "justext @ http://corpus.tools/raw-attachment/wiki/Downloads/justext-3.0.tar.gz",
+    "lxml<5.2.0",
+    "numpy==1.*",
+    "python-dateutil==2.9.0.post0",
+    "pytz==2024.2",
+    "requests==2.32.3",
+    "six==1.16.0",
+    "soupsieve==2.6",
+    "typing-extensions==4.12.2",
+    "tzdata==2024.2",
+    "urllib3==2.2.3",
+    "webencodings==0.5.1",
+    "pyyaml>=6.0.2",
+    "warcio>=1.7.4",
+    "psycopg2-binary>=2.9.10",
+    "PyMuPDF==1.23.26",
+    "pdfminer-six==20201018",
+    "sentence-splitter==1.4",
+    "joblib==1.4.2",
+    "tqdm>=4.67.1",
+    "fasttext>=0.9.3",
+    "huggingface-hub>=0.26.3",
+    "python-docx>=1.1.2",
+    "docx2txt>=0.8",
+    "simhash>=2.1.2",
+    "python-dotenv>=1.0.1",
+]
+requires-python = ">=3.10,<3.13"
+readme = "README.md"
+license = {text = "GPL"}
+
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
+
+[tool.pdm]
+distribution = true
+packages = [{include = "src/maalfrid_toolkit", from = "src"}]

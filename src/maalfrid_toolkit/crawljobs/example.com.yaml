@@ -1,0 +1,16 @@
+jobid: 1
+domain: example.com
+crawler: wget
+seed: https://example.com
+span_hosts: true
+crawl_depth: 12
+enabled: true
+timeout_seconds: 1209600
+exclude_paths:
+- /mytestpath
+exclude_subdomains:
+- mytestdomain.example.com
+exclude_urls:
+- /my-url?my-parameter=my-value
+use_sitemap: false
+ignore_robotstxt: false
