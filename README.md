@@ -9,6 +9,13 @@ It builds upon:
 - DOC extraction using docx2txt and antiword
 - Gielladetect/pytextcat and GlotLID V3 for language detection
 
+# Install
+## Install with pip
+
+```bash
+pip install git+https://github.com/NationalLibraryOfNorway/maalfrid_toolkit
+```
+
 ## Install with pdm
 
 ```bash
