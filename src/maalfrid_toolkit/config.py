@@ -24,9 +24,9 @@ LANGUAGE_FILTER_DIR = os.path.join(current_dir, 'models/language_filter/')
 SUPPORTED_CONTENT_TYPES = ['text/html', 'application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/vnd.oasis.opendocument.text-master']
 
 # crawler options
-user_agent = "test-agent"
-prefix='test-prefix'
-crawlhost='localhost'
+user_agent = os.getenv("MAALFRID_TOOLKIT_USER_AGENT", "test-agent")
+prefix = os.getenv("MAALFRID_TOOLKIT_CRAWL_PREFIX", "test-prefix")
+crawlhost = os.getenv("MAALFRID_TOOLKIT_CRAWL_HOST", 'localhost')
 
 # DB options (use environment variables)
 database = os.getenv("MAALFRID_TOOLKIT_POSTGRES_DB", "")

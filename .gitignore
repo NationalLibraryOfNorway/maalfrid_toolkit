@@ -164,3 +164,4 @@ cython_debug/
 # maalfrid_toolkit specific paths
 src/maalfrid_toolkit/warc
 src/maalfrid_toolkit/logs
+src/maalfrid_toolkit/crawljobs/wget_warc.conf
