@@ -76,7 +76,8 @@ def print_rows(rows):
         print(row[0][:50].ljust(50), row[1], row[2], sep="\t")
 
 def document_pipeline(record):
-    print(record.url)
+    if not args.to_jsonl:
+        print(record.url)
     
     if record.content:
         if record.full_text:
@@ -85,10 +86,14 @@ def document_pipeline(record):
             if args.verbose:
                 print_rows(rows)
                 print("\n")
+            elif args.to_jsonl:
+                jsonl = record.to_dict()
+                jsonl["lang"] = langStr[1]
+                print(json.dumps(jsonl))
             return langStr
-        elif isinstance(record.full_text, list):
+        elif isinstance(record.full_text, list) and not args.to_jsonl:
             print("No content left after boilerplate removal!\n")
-        elif record.full_text == None:
+        elif record.full_text == None and not args.to_jsonl:
             print("Content could not be extracted.")
     else:
         print("No content to parse.\n")
@@ -107,6 +112,7 @@ def parse_args():
     parser.add_argument('--content_type', type=str, help='Content type to filter on')
     parser.add_argument('--lid_engine', type=str, default="glotlid", help='Default engine for language identification')
     parser.add_argument('--verbose', action='store_true', help="Print language statistics for each response.")
+    parser.add_argument('--to_jsonl', action='store_true', help="Dump result as JSONL to STDOUT.")
     args = parser.parse_args()
 
     if not args.url and not args.warc_file:
@@ -153,7 +159,8 @@ def run(args):
                     if langStr:
                         rows.append(aggregate_statistics(langStr))
 
-    aggregate_all(rows)    
+    if not args.to_jsonl:
+        aggregate_all(rows)
 
 if __name__ == '__main__':
     args = parse_args()

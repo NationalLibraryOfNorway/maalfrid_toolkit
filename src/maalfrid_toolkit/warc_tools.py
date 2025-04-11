@@ -107,6 +107,9 @@ class MaalfridWarcRecord(ArcWarcRecord):
         if self.calculate_simhash == True:
             self._get_simhash()
 
+    def to_dict(self):
+        return {'url': self.url, 'date': self.rec_headers.get('WARC-Date'), 'content_type': self.content_type, 'fulltext': self.full_text, 'full_text_hash': self.full_text_hash}
+
 def convert_to_maalfrid_record(arc_warc_record, warc_file_id=None, warc_file_name=None, use_lenient_html_parser=False, calculate_simhash=False):
     return MaalfridWarcRecord(arc_warc_record.format, arc_warc_record.rec_type, arc_warc_record.rec_headers, arc_warc_record.raw_stream, arc_warc_record.http_headers, arc_warc_record.content_type, arc_warc_record.length, warc_file_id=warc_file_id, warc_file_name=warc_file_name, use_lenient_html_parser=use_lenient_html_parser, calculate_simhash=calculate_simhash)
 
