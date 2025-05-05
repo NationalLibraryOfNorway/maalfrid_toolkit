@@ -1,19 +1,22 @@
+import os
 import pytest
 import maalfrid_toolkit.warc_tools as warc_tools
 
+test_file_path = os.path.join(os.path.dirname(__file__), "testfiles")
+
 @pytest.fixture
 def load_html_warc():
-    with open("testfiles/html.warc.gz", "rb") as stream:
+    with open(os.path.join(test_file_path, "html.warc.gz"), "rb") as stream:
         yield stream
 
 @pytest.fixture
 def load_pdf_warc():
-    with open("testfiles/pdf.warc.gz", "rb") as stream:
+    with open(os.path.join(test_file_path, "pdf.warc.gz"), "rb") as stream:
         yield stream
 
 @pytest.fixture
 def load_docx_warc():
-    with open("testfiles/docx.warc.gz", "rb") as stream:
+    with open(os.path.join(test_file_path, "docx.warc.gz"), "rb") as stream:
         yield stream
 
 def test_warc_filter(load_html_warc):
