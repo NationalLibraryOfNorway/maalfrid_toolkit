@@ -1,6 +1,6 @@
-# Database
+# Database (PostgreSQL)
 
-If you want to process and inspect the crawled dataset in a DB, you can use the following setup:
+If you want to process and inspect the crawled dataset in a DB, you can use the following setup (the example uses PostgreSQL):
 
 ```bash
 psql -c "CREATE DATABASE maalfrid_test"
