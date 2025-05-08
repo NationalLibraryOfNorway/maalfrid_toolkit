@@ -51,3 +51,13 @@ build-backend = "pdm.backend"
 [tool.pdm]
 distribution = true
 packages = [{include = "src/maalfrid_toolkit", from = "src"}]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3.5",
+]
+
+[tool.pytest.ini_options]
+filterwarnings = [
+    "ignore::DeprecationWarning"
+]
