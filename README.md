@@ -3,11 +3,11 @@
 __maalfrid_toolkit__ is a Python package designed for crawling and extracting natural language data from documents found on the web (HTML, PDF, DOC). It is primarily used in the Målfrid project, a collaboration between the National Library of Norway and The Language Council of Norway, which aims to measure the usage of the two official Norwegian language forms, Bokmål and Nynorsk, on Norwegian public sector websites. While the toolkit has a particular emphasis on the Nordic countries, it supports extraction and language detection of more than 60 languages.
 
 It builds upon:
-- wget and (custom) browsertrix for crawling
-- JusText for HTML boilerplate removal
-- Notram PDF text extraction from NB AI-lab
+- [wget](https://www.gnu.org/software/wget/) and [(custom) browsertrix](https://github.com/Sprakbanken/browsertrix-crawler/) for crawling
+- [JusText](https://github.com/miso-belica/jusText) for HTML boilerplate removal
+- [Notram PDF text extraction](https://github.com/NbAiLab/notram/) from NB AI-lab
 - DOC extraction using docx2txt and antiword
-- Gielladetect/pytextcat and GlotLID V3 for language detection
+- [Gielladetect/pytextcat](https://github.com/NationalLibraryOfNorway/gielladetect) and [GlotLID V3](https://huggingface.co/cis-lmu/glotlid) for language detection
 
 # Install
 ## Install with pip
