@@ -67,7 +67,7 @@ pdm run python -m maalfrid_toolkit.pipeline --url https://www.nb.no/content/uplo
 pdm run python -m maalfrid_toolkit.pipeline --warc_file example_com-00000.warc.gz --verbose
 ```
 
-## Database
+## Database (Postgres)
 
 If you want to store and process the data further in a database, setup a Postgres database and enter your credentials in an .env file in the package root directory (see env-example). Be sure to populate the database with schema and indices found in db/ prior to running the commands in maalfrid_toolkit.db.
 
