@@ -1,6 +1,6 @@
 [project]
 name = "maalfrid_toolkit"
-version = "1.0.1"
+version = "1.0.2"
 description = "Toolkit for the Målfrid project"
 authors = [
     {name = "Magnus Breder Birkenes", email = "magnus.birkenes@nb.no"},
@@ -42,6 +42,9 @@ dependencies = [
 requires-python = ">=3.10,<3.13"
 readme = "README.md"
 license-files = ["LICENSE.txt", "src/justext/LICENSE"]
+
+[project.urls]
+repository = "https://github.com/NationalLibraryOfNorway/maalfrid_toolkit"
 
 [build-system]
 requires = ["pdm-backend"]
