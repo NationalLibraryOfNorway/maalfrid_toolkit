@@ -5,7 +5,7 @@
 groups = ["default", "dev"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:b5db4ac5634cb941fe97cfb6ad6de46845b3776bbcf9d0b94dc714202fc08c77"
+content_hash = "sha256:48597d0c7f36cade3e21bdcbb673a11aa456fb43eca809f3c0a2683ed075125b"
 
 [[metadata.targets]]
 requires_python = ">=3.12,<3.13"
@@ -302,17 +302,6 @@ marker = "python_version >= \"3.12\" and python_version < \"3.13\""
 files = [
     {file = "joblib-1.4.2-py3-none-any.whl", hash = "sha256:06d478d5674cbc267e7496a410ee875abd68e4340feff4490bcb7afb88060ae6"},
     {file = "joblib-1.4.2.tar.gz", hash = "sha256:2382c5816b2636fbd20a09e0f4e9dad4736765fdfb7dca582943b9c1366b3f0e"},
-]
-
-[[package]]
-name = "justext"
-version = "3.0"
-url = "http://corpus.tools/raw-attachment/wiki/Downloads/justext-3.0.tar.gz"
-summary = "Heuristic based boilerplate removal tool"
-groups = ["default"]
-marker = "python_version >= \"3.12\" and python_version < \"3.13\""
-files = [
-    {file = "justext-3.0.tar.gz", hash = "sha256:ce64dfb5f7d07862f2b3a4cf97dff0c6f41fedcb25ef3733b449144c694645e7"},
 ]
 
 [[package]]
