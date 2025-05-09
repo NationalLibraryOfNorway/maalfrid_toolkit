@@ -1,0 +1,9 @@
+# jusText
+
+## Prerequisites:
+
+lxml (>=4.1)
+
+To install the package type: `python setup.py install`
+
+For usage information see: `justext --help`

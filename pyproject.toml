@@ -13,7 +13,6 @@ dependencies = [
     "gielladetect==1.0.3",
     "html5lib==1.1",
     "idna==3.10",
-    "justext @ http://corpus.tools/raw-attachment/wiki/Downloads/justext-3.0.tar.gz",
     "lxml<5.2.0",
     "numpy==1.*",
     "python-dateutil==2.9.0.post0",
@@ -42,7 +41,7 @@ dependencies = [
 ]
 requires-python = ">=3.10,<3.13"
 readme = "README.md"
-license = {text = "GPL"}
+license-files = ["LICENSE.txt", "src/justext/LICENSE"]
 
 [build-system]
 requires = ["pdm-backend"]
@@ -59,5 +58,6 @@ dev = [
 
 [tool.pytest.ini_options]
 filterwarnings = [
-    "ignore::DeprecationWarning"
+    "ignore::DeprecationWarning",
+    "ignore::SyntaxWarning"
 ]
