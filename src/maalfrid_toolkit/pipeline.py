@@ -110,7 +110,7 @@ def parse_args():
     parser.add_argument('--calculate_simhash', action='store_true', help="Calculate simhash for each record.")
     parser.add_argument('--dedup', action='store_true', help='Do not count exact text duplicates (when using WARC file)')
     parser.add_argument('--content_type', type=str, help='Content type to filter on')
-    parser.add_argument('--lid_engine', type=str, default="glotlid", help='Default engine for language identification')
+    parser.add_argument('--lid_engine', type=str, default="textcat", help='Default engine for language identification')
     parser.add_argument('--verbose', action='store_true', help="Print language statistics for each response.")
     parser.add_argument('--to_jsonl', action='store_true', help="Dump result as JSONL to STDOUT.")
     args = parser.parse_args()
