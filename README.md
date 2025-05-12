@@ -44,7 +44,7 @@ sudo apt-get install antiword
 ## Test run crawl
 
 ```bash
-python3 -m maalfrid_toolkit.crawl src/maalfrid_toolkit/crawljobs/example.com.yaml --to_jsonl
+python3 -m maalfrid_toolkit.crawl src/maalfrid_toolkit/crawljobs/example.com.yaml
 ```
 
 ## Test run pipeline
