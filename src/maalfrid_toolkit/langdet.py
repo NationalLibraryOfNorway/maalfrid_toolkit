@@ -1,5 +1,10 @@
-import fasttext
-from huggingface_hub import hf_hub_download
+try:
+    import fasttext
+    from huggingface_hub import hf_hub_download
+    fasttext_available = True
+except ImportError:
+    fasttext_available = False
+
 import gielladetect as gd
 import maalfrid_toolkit.config as c
 from maalfrid_toolkit.utils import return_stoplists
@@ -99,10 +104,13 @@ def langdet(docId="", paras=[], stop_word_filter=True, apply_language_filter=Tru
     documentStr = ' '.join(paras)
 
     # get doclang
-    if engine == "textcat":
+    if engine == "glotlid" and fasttext_available == True:
+        detect_language = run_fasttext
+    elif engine == "glotlid" and fasttext_available == False:
+        print("Fasttext not installed, only gielladetect is available.")
         detect_language = gd.detect
     else:
-        detect_language = run_fasttext
+        detect_language = gd.detect
 
     lang = detect_language(documentStr)
 

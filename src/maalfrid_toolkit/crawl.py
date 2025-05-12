@@ -62,6 +62,7 @@ def extract_urls(page):
 
     time.sleep(2)
 
+def sitemap_crawler(myURL):
     urls = []
 
     for url in extract_urls(request(myURL)):

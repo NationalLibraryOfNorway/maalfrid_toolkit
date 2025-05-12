@@ -32,8 +32,6 @@ dependencies = [
     "sentence-splitter==1.4",
     "joblib==1.4.2",
     "tqdm>=4.67.1",
-    "fasttext>=0.9.3",
-    "huggingface-hub>=0.26.3",
     "python-docx>=1.1.2",
     "docx2txt>=0.8",
     "simhash>=2.1.2",
@@ -42,6 +40,9 @@ dependencies = [
 requires-python = ">=3.10,<3.13"
 readme = "README.md"
 license-files = ["LICENSE.txt", "src/justext/LICENSE"]
+
+[project.optional-dependencies]
+glotlid = ["fasttext>=0.9.3", "huggingface-hub>=0.26.3"]
 
 [project.urls]
 repository = "https://github.com/NationalLibraryOfNorway/maalfrid_toolkit"
