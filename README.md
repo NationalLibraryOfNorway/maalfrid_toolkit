@@ -15,6 +15,11 @@ It builds upon:
 ```bash
 pip install maalfrid_toolkit
 ```
+With Glotlid / fasttext (optional):
+
+```bash
+pip install maalfrid_toolkit[glotlid]
+```
 
 ## Install with pdm
 
@@ -22,15 +27,15 @@ pip install maalfrid_toolkit
 pdm install
 ```
 
-## OS-level dependencies (tested with Ubuntu 24.04)
+## OS-level dependencies (tested with Ubuntu 24.04) for optional functionality
 
-### For fasttext
+### For fasttext (optional)
 
 ```bash
 sudo apt-get install build-essential python3-dev
 ```
 
-### For .doc text extraction
+### For .doc text extraction (optional)
 
 ```bash
 sudo apt-get install antiword
@@ -47,24 +52,24 @@ python3 -m maalfrid_toolkit.crawl src/maalfrid_toolkit/crawljobs/example.com.yam
 ### On HTML
 
 ```bash
-python -m maalfrid_toolkit.pipeline --url https://www.nb.no/utstilling/opplyst-glimt-fra-en-kulturhistorie/ --verbose
+python -m maalfrid_toolkit.pipeline --url https://www.nb.no/utstilling/opplyst-glimt-fra-en-kulturhistorie/ --to_jsonl
 ```
 
 ### On PDF
 
 ```bash
-python -m maalfrid_toolkit.pipeline --url https://www.nb.no/sbfil/dok/nst_taledat_dk.pdf --verbose
+python -m maalfrid_toolkit.pipeline --url https://www.nb.no/sbfil/dok/nst_taledat_dk.pdf --to_jsonl
 ```
 
 ### On DOC
 
 ```bash
-python -m maalfrid_toolkit.pipeline --url https://www.nb.no/content/uploads/2018/11/Søknadsskjema-Bokhylla-2.doc
+python -m maalfrid_toolkit.pipeline --url https://www.nb.no/content/uploads/2018/11/Søknadsskjema-Bokhylla-2.doc --to_jsonl
 ```
 
 ### On WARC file (e.g. from self-crawled material)
 ```bash
-python -m maalfrid_toolkit.pipeline --warc_file example_com-00000.warc.gz --verbose
+python -m maalfrid_toolkit.pipeline --warc_file example_com-00000.warc.gz --to_jsonl
 ```
 
 ## Database (Postgres)
