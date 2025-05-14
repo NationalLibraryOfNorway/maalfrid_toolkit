@@ -206,7 +206,7 @@ def main():
 
     if args.command:
         if args.command == "ls":
-            if args.file.endswith('warc.gz') and not args.file.endswith('meta.warc.gz'):
+            if args.file.endswith('warc.gz') or args.file.endswith('warc'):
                 with open(args.file, 'rb') as stream:
                     for record in filter_warc(stream):
                         maalfrid_record = convert_to_maalfrid_record(record, warc_file_name=args.file)

@@ -152,7 +152,7 @@ def run(args):
                 rows.append(row)
 
     elif args.warc_file:
-        if args.warc_file.endswith('warc.gz') and not args.warc_file.endswith('meta.warc.gz'):
+        if args.warc_file.endswith('warc.gz') or args.warc_file.endswith('warc'):
             with open(args.warc_file, 'rb') as stream:
                 # optional override of content types
                 if args.content_type:
