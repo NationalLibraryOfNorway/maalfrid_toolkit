@@ -1,6 +1,6 @@
 [project]
 name = "maalfrid_toolkit"
-version = "1.1.0"
+version = "1.1.1"
 description = "Toolkit for the Målfrid project"
 authors = [
     {name = "Magnus Breder Birkenes", email = "magnus.birkenes@nb.no"},
