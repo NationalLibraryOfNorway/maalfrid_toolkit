@@ -51,7 +51,7 @@ python -m maalfrid_toolkit.pipeline --url https://www.nb.no/content/uploads/2018
 ### On WARC file (e.g. from self-crawled material)
 
 ```bash
-python -m maalfrid_toolkit.pipeline --warc_file example_com-00000.warc.gz --to_jsonl
+python -m maalfrid_toolkit.pipeline --warc_file example_com-00000.warc.gz --calculate_simhash --to_jsonl > warc.jsonl
 ```
 
 ### On sitemap
