@@ -15,7 +15,8 @@ It builds upon:
 ```bash
 pip install maalfrid_toolkit
 ```
-With Glotlid / fasttext (optional):
+
+With Glotlid / fasttext (optional, see below for caveats):
 
 ```bash
 pip install maalfrid_toolkit[glotlid]
@@ -25,26 +26,6 @@ pip install maalfrid_toolkit[glotlid]
 
 ```bash
 pdm install
-```
-
-## OS-level dependencies (tested with Ubuntu 24.04) for optional functionality
-
-### For fasttext (optional)
-
-```bash
-sudo apt-get install build-essential python3-dev
-```
-
-### For .doc text extraction (optional)
-
-```bash
-sudo apt-get install antiword
-```
-
-## Test run crawl
-
-```bash
-python3 -m maalfrid_toolkit.crawl src/maalfrid_toolkit/crawljobs/example.com.yaml
 ```
 
 ## Test run pipeline
@@ -68,13 +49,34 @@ python -m maalfrid_toolkit.pipeline --url https://www.nb.no/content/uploads/2018
 ```
 
 ### On WARC file (e.g. from self-crawled material)
+
 ```bash
 python -m maalfrid_toolkit.pipeline --warc_file example_com-00000.warc.gz --to_jsonl
+```
+
+### On sitemap
+
+```bash
+python -m maalfrid_toolkit.pipeline --url https://example.com/sitemap.xml --sitemap_crawler --to_jsonl > example.jsonl
 ```
 
 ## Database (Postgres)
 
 If you want to store and process the data further in a database, setup a Postgres database and enter your credentials in an .env file in the package root directory (see env-example). Be sure to populate the database with schema and indices found in db/ prior to running the commands in maalfrid_toolkit.db.
+
+## OS-level dependencies (tested with Ubuntu 24.04) for optional functionality
+
+### For fasttext (optional)
+
+```bash
+sudo apt-get install build-essential python3-dev
+```
+
+### For .doc text extraction (optional)
+
+```bash
+sudo apt-get install antiword
+```
 
 ## A note on using Browsertrix
 
