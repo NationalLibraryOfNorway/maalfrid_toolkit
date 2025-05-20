@@ -160,8 +160,13 @@ def run(args):
                     content_types = [args.content_type]
                 else:
                     content_types = c.SUPPORTED_CONTENT_TYPES
+
+                total_count = wt.count_filtered_records(stream, content_types)
+
+                # Reset file pointer for reuse
+                stream.seek(0)
                     
-                for record in wt.filter_warc(stream, content_types):
+                for record in tqdm(wt.filter_warc(stream, content_types), total=total_count):
                     maalfrid_record = wt.convert_to_maalfrid_record(record, warc_file_name=args.warc_file, use_lenient_html_parser=args.use_lenient_html_parser, calculate_simhash=args.calculate_simhash)
                     maalfrid_record.extract_full_text()
                     if args.dedup == True:
