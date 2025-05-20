@@ -86,6 +86,7 @@ def document_pipeline(record):
         if record.full_text:
             langStr = langdet.langdet(docId=record.url, paras=record.full_text, apply_language_filter=True, engine=args.lid_engine)
             rows = create_document(paragraphs=record.full_text, langStr=langStr)
+            record.full_text = [{'idx': idx, 'text': paragraph[0], "tokens": paragraph[1], 'lang': paragraph[2]} for idx, paragraph in enumerate(rows)]
             if args.verbose:
                 print_rows(rows)
                 print("\n")
