@@ -189,6 +189,12 @@ def filter_warc(stream, content_types=["text/html"]):
                     if record.rec_headers.get('Content-Type').startswith("text/html"):
                         yield record
 
+def count_filtered_records(stream, content_types=["text/html"]):
+    count = 0
+    for _ in filter_warc(stream, content_types):
+        count += 1
+    return count
+
 def main():
     # Parse commandline
     parser = argparse.ArgumentParser(
