@@ -57,7 +57,7 @@ python -m maalfrid_toolkit.pipeline --warc_file example_com-00000.warc.gz --to_j
 ### On sitemap
 
 ```bash
-python -m maalfrid_toolkit.pipeline --url https://example.com/sitemap.xml --sitemap_crawler --to_jsonl > example.jsonl
+python -m maalfrid_toolkit.pipeline --url https://example.com/sitemap.xml --crawl_sitemap --to_jsonl > example.jsonl
 ```
 
 ## Database (Postgres)
