@@ -140,7 +140,6 @@ def run(args):
     if args.url:
         url = args.url
         if args.crawl_sitemap:
-            print("Crawling sitemap", args.url)
             urls = crawl.sitemap_crawler(args.url)
             for url in tqdm(urls):
                 row = process_url(url, args)
