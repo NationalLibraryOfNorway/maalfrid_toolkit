@@ -8,6 +8,7 @@ It builds upon:
 - [Notram PDF text extraction](https://github.com/NbAiLab/notram/) from NB AI-lab
 - DOC extraction using docx2txt and antiword
 - [Gielladetect/pytextcat](https://github.com/NationalLibraryOfNorway/gielladetect) and [GlotLID V3](https://huggingface.co/cis-lmu/glotlid) for language detection
+- [Simhash](https://github.com/1e0ng/simhash) for near-duplicate detection
 
 # Install
 ## Install with pip
@@ -51,7 +52,7 @@ python -m maalfrid_toolkit.pipeline --url https://www.nb.no/content/uploads/2018
 ### On WARC file (e.g. from self-crawled material)
 
 ```bash
-python -m maalfrid_toolkit.pipeline --warc_file example_com-00000.warc.gz --to_jsonl
+python -m maalfrid_toolkit.pipeline --warc_file example_com-00000.warc.gz --calculate_simhash --to_jsonl > warc.jsonl
 ```
 
 ### On sitemap
