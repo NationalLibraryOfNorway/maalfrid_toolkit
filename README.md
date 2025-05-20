@@ -8,6 +8,7 @@ It builds upon:
 - [Notram PDF text extraction](https://github.com/NbAiLab/notram/) from NB AI-lab
 - DOC extraction using docx2txt and antiword
 - [Gielladetect/pytextcat](https://github.com/NationalLibraryOfNorway/gielladetect) and [GlotLID V3](https://huggingface.co/cis-lmu/glotlid) for language detection
+- [Simhash](https://github.com/1e0ng/simhash) for near-duplicate detection
 
 # Install
 ## Install with pip
