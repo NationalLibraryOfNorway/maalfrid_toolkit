@@ -10,6 +10,7 @@ import maalfrid_toolkit.htmlclean as htmlclean
 from maalfrid_toolkit.utils import convert_encoding, return_all_stop_words
 import json
 import time
+from tqdm import tqdm
 
 stop_words = return_all_stop_words()
 hashes = set()
@@ -141,7 +142,7 @@ def run(args):
         if args.crawl_sitemap:
             print("Crawling sitemap", args.url)
             urls = crawl.sitemap_crawler(args.url)
-            for url in urls:
+            for url in tqdm(urls):
                 row = process_url(url, args)
                 time.sleep(2)
                 if row:
