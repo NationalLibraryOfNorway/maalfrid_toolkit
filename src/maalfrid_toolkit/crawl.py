@@ -48,7 +48,7 @@ def request(myURL):
     return page
 
 def extract_urls(page):
-    soup = BeautifulSoup(page.content, 'html.parser')
+    soup = BeautifulSoup(page.content, 'xml')
     urls = soup.find_all('loc', recursive=True)
 
     for url in urls:
