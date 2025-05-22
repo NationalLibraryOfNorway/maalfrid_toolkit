@@ -153,7 +153,7 @@ def run(args):
                 rows.append(row)
 
     elif args.warc_file:
-        if args.warc_file.endswith('warc.gz') or args.warc_file.endswith('warc'):
+        if args.warc_file.endswith('.warc.gz') or args.warc_file.endswith('.warc') or args.warc_file.endswith('.arc') or args.warc_file.endswith('.arc.gz'):
             with open(args.warc_file, 'rb') as stream:
                 # optional override of content types
                 if args.content_type:
@@ -161,12 +161,12 @@ def run(args):
                 else:
                     content_types = c.SUPPORTED_CONTENT_TYPES
 
-                total_count = wt.count_filtered_records(stream, content_types)
+                total_count = wt.count_filtered_records(stream, content_types, arc2warc=True)
 
                 # Reset file pointer for reuse
                 stream.seek(0)
                     
-                for record in tqdm(wt.filter_warc(stream, content_types), total=total_count):
+                for record in tqdm(wt.filter_warc(stream, content_types, arc2warc=True), total=total_count):
                     maalfrid_record = wt.convert_to_maalfrid_record(record, warc_file_name=args.warc_file, use_lenient_html_parser=args.use_lenient_html_parser, calculate_simhash=args.calculate_simhash)
                     maalfrid_record.extract_full_text()
                     if args.dedup == True:

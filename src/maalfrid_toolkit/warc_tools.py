@@ -169,8 +169,8 @@ def warc_dedup(files):
                         print("error in ", file)
                         pass
 
-def filter_warc(stream, content_types=["text/html"]):
-    for record in ArchiveIterator(stream):
+def filter_warc(stream, content_types=["text/html"], arc2warc=False):
+    for record in ArchiveIterator(stream, arc2warc=arc2warc):
         # filter only status_code 200 responses
         if record.rec_type == 'response':
             mime = record.http_headers.get('Content-Type')
@@ -189,9 +189,9 @@ def filter_warc(stream, content_types=["text/html"]):
                     if record.rec_headers.get('Content-Type').startswith("text/html"):
                         yield record
 
-def count_filtered_records(stream, content_types=["text/html"]):
+def count_filtered_records(stream, content_types=["text/html"], arc2warc=False):
     count = 0
-    for _ in filter_warc(stream, content_types):
+    for _ in filter_warc(stream, content_types, arc2warc=arc2warc):
         count += 1
     return count
 

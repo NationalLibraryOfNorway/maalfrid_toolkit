@@ -49,7 +49,7 @@ python -m maalfrid_toolkit.pipeline --url https://www.nb.no/sbfil/dok/nst_taleda
 python -m maalfrid_toolkit.pipeline --url https://www.nb.no/content/uploads/2018/11/Søknadsskjema-Bokhylla-2.doc --to_jsonl
 ```
 
-### On WARC file (e.g. from self-crawled material)
+### On (W)ARC file (e.g. from self-crawled material)
 
 ```bash
 python -m maalfrid_toolkit.pipeline --warc_file example_com-00000.warc.gz --calculate_simhash --to_jsonl > warc.jsonl
