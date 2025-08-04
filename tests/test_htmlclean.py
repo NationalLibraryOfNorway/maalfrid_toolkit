@@ -1,5 +1,4 @@
 import pytest
-from bs4 import BeautifulSoup
 from maalfrid_toolkit.utils import convert_encoding, return_all_stop_words
 import maalfrid_toolkit.htmlclean as htmlclean
 
