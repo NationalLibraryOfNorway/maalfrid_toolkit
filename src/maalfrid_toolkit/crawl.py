@@ -9,7 +9,7 @@ import uuid
 import json
 import time
 import requests
-from bs4 import BeautifulSoup
+import lxml.etree
 from urllib.parse import urlparse
 import re
 
@@ -48,8 +48,9 @@ def request(myURL):
     return page
 
 def extract_urls(page):
-    soup = BeautifulSoup(page.content, 'xml')
-    urls = soup.find_all('loc', recursive=True)
+    tree = lxml.etree.fromstring(page.content)
+
+    urls = tree.findall('.//{*}loc')
 
     for url in urls:
         parsed_url = urlparse(url.text)
