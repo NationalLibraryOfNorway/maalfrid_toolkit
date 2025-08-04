@@ -477,8 +477,10 @@ def justext(html_text, stoplist, length_low=LENGTH_LOW_DEFAULT,
     dom_path:
       A dom path to the paragraph in the originial HTML page.
     """
-    root = preprocess(html_text, encoding=encoding,
-        default_encoding=default_encoding, enc_errors=enc_errors)
+    #root = preprocess(html_text, encoding=encoding,
+    #    default_encoding=default_encoding, enc_errors=enc_errors)
+
+    root = preprocess_html_root(html_text)
     paragraphs = make_paragraphs(root)
     classify_paragraphs(paragraphs, stoplist, length_low, length_high,
         stopwords_low, stopwords_high, max_link_density, no_headings)
