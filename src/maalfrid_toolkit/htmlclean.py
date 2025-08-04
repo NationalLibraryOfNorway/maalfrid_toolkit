@@ -1,6 +1,5 @@
 import requests
 from bs4 import BeautifulSoup
-import html5lib
 import lxml.html
 import justext
 from maalfrid_toolkit.utils import convert_encoding, return_all_stop_words
@@ -19,7 +18,8 @@ def get_html(url):
 def get_lxml_tree(utf_stream, use_lenient_html_parser=False):
     """ Return a lxml tree for justext (optional: Use a lenient parser to fix broken HTML) """
     if use_lenient_html_parser == True:
-        tree = html5lib.parse(utf_stream, treebuilder="lxml", namespaceHTMLElements=False)
+        valid_html = BeautifulSoup(utf_stream, "html5lib").encode("utf-8")
+        tree = lxml.html.fromstring(valid_html)
     else:
         tree = lxml.html.fromstring(utf_stream)
     return tree
