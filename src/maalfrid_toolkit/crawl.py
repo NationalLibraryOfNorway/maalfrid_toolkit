@@ -1,17 +1,19 @@
-import sys
-import shutil
-import os
-import subprocess
-from datetime import datetime
-import maalfrid_toolkit.config as c
-import yaml
-import uuid
 import json
-import time
-import requests
-import lxml.etree
-from urllib.parse import urlparse
+import os
 import re
+import shutil
+import subprocess
+import sys
+import time
+import uuid
+from datetime import datetime
+from urllib.parse import urlparse
+
+import lxml.etree
+import requests
+import yaml
+
+import maalfrid_toolkit.config as c
 
 # create start timestamp
 timestamp = datetime.now()
@@ -22,12 +24,12 @@ instance_id = str(uuid.uuid4())
 
 def create_folders(prefix):
     # check if output folder exists, if not, create it
-    path_to_output_folder = os.path.join(c.current_dir, "warc", prefix)
+    path_to_output_folder = os.path.join(c.output_dir, "warc", prefix)
     if not os.path.exists(path_to_output_folder):
         os.makedirs(path_to_output_folder)
 
     # check if log folder exists, if not, create it
-    path_to_logs_folder = os.path.join(c.current_dir, "logs", prefix)
+    path_to_logs_folder = os.path.join(c.output_dir, "logs", prefix)
     if not os.path.exists(path_to_logs_folder):
         os.makedirs(path_to_logs_folder)
 
