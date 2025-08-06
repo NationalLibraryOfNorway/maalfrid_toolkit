@@ -6,7 +6,6 @@ authors = [
     {name = "Magnus Breder Birkenes", email = "magnus.birkenes@nb.no"},
 ]
 dependencies = [
-    "beautifulsoup4==4.12.3",
     "certifi==2024.8.30",
     "charset-normalizer==3.4.0",
     "faust-cchardet==2.1.19",

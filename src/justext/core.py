@@ -435,7 +435,7 @@ def revise_paragraph_classification(paragraphs, max_good_distance=MAX_GOOD_DISTA
             distance += len(paragraphs[j]['text'])
             j += 1
 
-def justext(html_text, stoplist, length_low=LENGTH_LOW_DEFAULT,
+def justext(lxml_object, stoplist, length_low=LENGTH_LOW_DEFAULT,
         length_high=LENGTH_HIGH_DEFAULT, stopwords_low=STOPWORDS_LOW_DEFAULT,
         stopwords_high=STOPWORDS_HIGH_DEFAULT, max_link_density=MAX_LINK_DENSITY_DEFAULT,
         max_good_distance=MAX_GOOD_DISTANCE_DEFAULT,
@@ -477,8 +477,13 @@ def justext(html_text, stoplist, length_low=LENGTH_LOW_DEFAULT,
     dom_path:
       A dom path to the paragraph in the originial HTML page.
     """
-    root = preprocess(html_text, encoding=encoding,
-        default_encoding=default_encoding, enc_errors=enc_errors)
+
+    # Adaptation for Maalfrid toolkit: skip the preprocess function (since preprocessing is done outside) and proceed directly to preprocess_html_root, expecting a lxml object
+
+    #root = preprocess(html_text, encoding=encoding,
+    #    default_encoding=default_encoding, enc_errors=enc_errors)
+
+    root = preprocess_html_root(lxml_object)
     paragraphs = make_paragraphs(root)
     classify_paragraphs(paragraphs, stoplist, length_low, length_high,
         stopwords_low, stopwords_high, max_link_density, no_headings)

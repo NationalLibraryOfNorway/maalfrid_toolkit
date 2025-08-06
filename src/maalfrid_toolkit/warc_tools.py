@@ -25,6 +25,8 @@ class MaalfridWarcRecord(ArcWarcRecord):
         super(MaalfridWarcRecord, self).__init__(*args, **kwargs)
         self.url = self.rec_headers.get('WARC-Target-URI')
         self.content_type = ''
+        self.title = None
+        self.metadata = None
         self.full_text = None
         self.full_text_hash = None
         self.content = None
@@ -69,10 +71,14 @@ class MaalfridWarcRecord(ArcWarcRecord):
             if self.content_type.startswith("text/html"):
                 try:
                     utf_stream = convert_encoding(self.content)
-                    if self.use_lenient_html_parser == True:
-                        valid_html = htmlclean.ensure_valid_html(utf_stream)
-                        utf_stream = valid_html.encode('utf-8')
-                    self.full_text = htmlclean.removeBP(utf_stream, stop_words=stop_words)
+                    tree = htmlclean.get_lxml_tree(utf_stream, use_lenient_html_parser=self.use_lenient_html_parser)
+
+                    # extract document title and metadata
+                    self.title = htmlclean.get_title(tree)
+                    self.metadata = htmlclean.get_metadata(tree)
+
+                    # extract fulltext
+                    self.full_text = htmlclean.removeBP(tree, stop_words=stop_words)
                 except Exception as e:
                     print("problem loading HTML... skipping", self.rec_headers.get('WARC-Record-ID'), self.warc_file_name)
             elif self.content_type.startswith("application/msword") or self.content_type.startswith("application/vnd.openxmlformats-officedocument.wordprocessingml.document") or self.content_type.startswith("application/vnd.oasis.opendocument.text-master"):
@@ -108,7 +114,7 @@ class MaalfridWarcRecord(ArcWarcRecord):
             self._get_simhash()
 
     def to_dict(self):
-        return {'url': self.url, 'date': self.rec_headers.get('WARC-Date'), 'content_type': self.content_type, 'fulltext': self.full_text, 'full_text_hash': self.full_text_hash, "simhash": self.simhash_value if self.calculate_simhash == True else None}
+        return {'url': self.url, 'date': self.rec_headers.get('WARC-Date'), 'content_type': self.content_type, 'title': self.title, 'metadata': self.metadata, 'fulltext': self.full_text, 'full_text_hash': self.full_text_hash, "simhash": self.simhash_value if self.calculate_simhash == True else None}
 
 def convert_to_maalfrid_record(arc_warc_record, warc_file_id=None, warc_file_name=None, use_lenient_html_parser=False, calculate_simhash=False):
     return MaalfridWarcRecord(arc_warc_record.format, arc_warc_record.rec_type, arc_warc_record.rec_headers, arc_warc_record.raw_stream, arc_warc_record.http_headers, arc_warc_record.content_type, arc_warc_record.length, warc_file_id=warc_file_id, warc_file_name=warc_file_name, use_lenient_html_parser=use_lenient_html_parser, calculate_simhash=calculate_simhash)

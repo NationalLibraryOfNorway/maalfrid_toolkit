@@ -17,6 +17,7 @@ NO_HEADINGS = False
 
 # DIR
 current_dir = os.path.dirname(os.path.abspath(__file__))
+output_dir = os.path.dirname(os.path.abspath(__file__))
 JUSTEXT_STOPLISTS_DIR = os.path.join(current_dir, 'models/stoplists_justext/')
 
 # Other
