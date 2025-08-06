@@ -165,3 +165,5 @@ cython_debug/
 src/maalfrid_toolkit/warc
 src/maalfrid_toolkit/logs
 src/maalfrid_toolkit/crawljobs/wget_warc.conf
+
+.python-version
