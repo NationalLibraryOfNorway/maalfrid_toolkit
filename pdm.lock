@@ -5,7 +5,7 @@
 groups = ["default", "dev"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:0a2e5bdedb1822ceb81ef878b1ad6637fcdf3f6dbffb92460f401bf2c855b27c"
+content_hash = "sha256:6b9a2971e5c46474fad0b7c8cdbb86f5ad9d72e86cbd4130e2d2b6e7aabc68b4"
 
 [[metadata.targets]]
 requires_python = ">=3.10,<3.13"
@@ -200,6 +200,23 @@ files = [
 ]
 
 [[package]]
+name = "dateparser"
+version = "1.2.2"
+requires_python = ">=3.8"
+summary = "Date parsing library designed to parse dates from HTML pages"
+groups = ["default"]
+dependencies = [
+    "python-dateutil>=2.7.0",
+    "pytz>=2024.2",
+    "regex>=2024.9.11",
+    "tzlocal>=0.2",
+]
+files = [
+    {file = "dateparser-1.2.2-py3-none-any.whl", hash = "sha256:5a5d7211a09013499867547023a2a0c91d5a27d15dd4dbcea676ea9fe66f2482"},
+    {file = "dateparser-1.2.2.tar.gz", hash = "sha256:986316f17cb8cdc23ea8ce563027c5ef12fc725b6fb1d137c14ca08777c5ecf7"},
+]
+
+[[package]]
 name = "docx2txt"
 version = "0.9"
 summary = "A pure python-based utility to extract text and images from docx files."
@@ -291,6 +308,25 @@ dependencies = [
 files = [
     {file = "html5lib-1.1-py2.py3-none-any.whl", hash = "sha256:0d78f8fde1c230e99fe37986a60526d7049ed4bf8a9fadbad5f00e22e58e041d"},
     {file = "html5lib-1.1.tar.gz", hash = "sha256:b2e5b40261e20f354d198eae92afc10d750afb487ed5e50f9c4eaf07c184146f"},
+]
+
+[[package]]
+name = "htmldate"
+version = "1.9.3"
+requires_python = ">=3.8"
+summary = "Fast and robust extraction of original and updated publication dates from URLs and web pages."
+groups = ["default"]
+dependencies = [
+    "charset-normalizer>=3.4.0",
+    "dateparser>=1.1.2",
+    "lxml<6,>=5.3.0; platform_system != \"Darwin\" or python_version > \"3.8\"",
+    "lxml==4.9.2; platform_system == \"Darwin\" and python_version <= \"3.8\"",
+    "python-dateutil>=2.9.0.post0",
+    "urllib3<3,>=1.26",
+]
+files = [
+    {file = "htmldate-1.9.3-py3-none-any.whl", hash = "sha256:3fadc422cf3c10a5cdb5e1b914daf37ec7270400a80a1b37e2673ff84faaaff8"},
+    {file = "htmldate-1.9.3.tar.gz", hash = "sha256:ac0caf4628c3ded4042011e2d60dc68dfb314c77b106587dd307a80d77e708e9"},
 ]
 
 [[package]]
@@ -873,6 +909,20 @@ groups = ["default"]
 files = [
     {file = "tzdata-2024.2-py2.py3-none-any.whl", hash = "sha256:a48093786cdcde33cad18c2555e8532f34422074448fbc874186f0abd79565cd"},
     {file = "tzdata-2024.2.tar.gz", hash = "sha256:7d85cc416e9382e69095b7bdf4afd9e3880418a2413feec7069d533d6b4e31cc"},
+]
+
+[[package]]
+name = "tzlocal"
+version = "5.3.1"
+requires_python = ">=3.9"
+summary = "tzinfo object for the local timezone"
+groups = ["default"]
+dependencies = [
+    "tzdata; platform_system == \"Windows\"",
+]
+files = [
+    {file = "tzlocal-5.3.1-py3-none-any.whl", hash = "sha256:eb1a66c3ef5847adf7a834f1be0800581b683b5608e74f86ecbcef8ab91bb85d"},
+    {file = "tzlocal-5.3.1.tar.gz", hash = "sha256:cceffc7edecefea1f595541dbd6e990cb1ea3d19bf01b2809f362a03dd7921fd"},
 ]
 
 [[package]]

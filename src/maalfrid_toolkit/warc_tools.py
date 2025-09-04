@@ -13,6 +13,8 @@ from io import BytesIO
 import hashlib
 import uuid
 import requests
+from htmldate.core import find_date
+import copy
 
 stop_words = return_all_stop_words()
 
@@ -33,6 +35,8 @@ class MaalfridWarcRecord(ArcWarcRecord):
         self.content_hash = None
         self.simhash_value = None
         self.simhash_value_bit = None
+        self.html_tree = None
+        self.estimated_date = None
         self._get_content_type()
         self._read_content()
         self._get_content_hash()
@@ -73,9 +77,8 @@ class MaalfridWarcRecord(ArcWarcRecord):
                     utf_stream = convert_encoding(self.content)
                     tree = htmlclean.get_lxml_tree(utf_stream, use_lenient_html_parser=self.use_lenient_html_parser)
 
-                    # extract document title and metadata
-                    self.title = htmlclean.get_title(tree)
-                    self.metadata = htmlclean.get_metadata(tree)
+                    # save tree for later use
+                    self.html_tree = copy.deepcopy(tree)
 
                     # extract fulltext
                     self.full_text = htmlclean.removeBP(tree, stop_words=stop_words)
@@ -113,8 +116,18 @@ class MaalfridWarcRecord(ArcWarcRecord):
         if self.calculate_simhash == True:
             self._get_simhash()
 
+    def extract_metadata(self):
+        # extract document title and metadata
+        self.title = htmlclean.get_title(self.html_tree)
+        self.metadata = htmlclean.get_metadata(self.html_tree)
+
+    def estimate_date(self):
+        if self.content != None:
+            if self.content_type.startswith("text/html"):
+                self.estimated_date = find_date(self.html_tree)
+
     def to_dict(self):
-        return {'url': self.url, 'date': self.rec_headers.get('WARC-Date'), 'content_type': self.content_type, 'title': self.title, 'metadata': self.metadata, 'fulltext': self.full_text, 'full_text_hash': self.full_text_hash, "simhash": self.simhash_value if self.calculate_simhash == True else None}
+        return {'url': self.url, 'crawl-date': self.rec_headers.get('WARC-Date'), 'estimated-date': self.estimated_date, 'content_type': self.content_type, 'title': self.title, 'metadata': self.metadata, 'fulltext': self.full_text, 'full_text_hash': self.full_text_hash, "simhash": self.simhash_value if self.calculate_simhash == True else None}
 
 def convert_to_maalfrid_record(arc_warc_record, warc_file_id=None, warc_file_name=None, use_lenient_html_parser=False, calculate_simhash=False):
     return MaalfridWarcRecord(arc_warc_record.format, arc_warc_record.rec_type, arc_warc_record.rec_headers, arc_warc_record.raw_stream, arc_warc_record.http_headers, arc_warc_record.content_type, arc_warc_record.length, warc_file_id=warc_file_id, warc_file_name=warc_file_name, use_lenient_html_parser=use_lenient_html_parser, calculate_simhash=calculate_simhash)
