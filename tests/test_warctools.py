@@ -92,6 +92,7 @@ def test_maalfrid_record_get_metadata(load_html_warc):
             record, warc_file_name="testfiles/html.warc.gz", calculate_simhash=True
         )
         maalfrid_record.extract_full_text()
+        maalfrid_record.extract_metadata()
         assert maalfrid_record.metadata == {
             "viewport": "width=device-width, initial-scale=1",
             "robots": "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
@@ -109,7 +110,21 @@ def test_maalfrid_record_get_title(load_html_warc):
             record, warc_file_name="testfiles/html.warc.gz", calculate_simhash=True
         )
         maalfrid_record.extract_full_text()
+        maalfrid_record.extract_metadata()
         assert (
             maalfrid_record.title
             == "Målfrid 2024 – Fritt tilgjengelege tekster frå norske statlege nettsider - Språkbanken"
+        )
+
+def test_maalfrid_record_estimate_date(load_html_warc):
+    for record in warc_tools.filter_warc(load_html_warc, content_types=["text/html"]):
+        maalfrid_record = warc_tools.convert_to_maalfrid_record(
+            record, warc_file_name="testfiles/html.warc.gz", calculate_simhash=True
+        )
+        maalfrid_record.extract_full_text()
+        maalfrid_record.extract_metadata()
+        maalfrid_record.estimate_date()
+        assert (
+            maalfrid_record.estimated_date
+            == "2025-02-10"
         )

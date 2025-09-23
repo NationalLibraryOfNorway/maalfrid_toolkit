@@ -35,6 +35,7 @@ dependencies = [
     "docx2txt>=0.8",
     "simhash>=2.1.2",
     "python-dotenv>=1.0.1",
+    "htmldate>=1.9.3",
 ]
 requires-python = ">=3.10,<3.13"
 readme = "README.md"
