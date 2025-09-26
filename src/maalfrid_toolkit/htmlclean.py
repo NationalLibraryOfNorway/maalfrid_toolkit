@@ -2,7 +2,7 @@ import requests
 import html5lib
 import lxml.html
 import justext
-from maalfrid_toolkit.utils import convert_encoding, return_all_stop_words
+from maalfrid_toolkit.utils import detect_and_decode, return_all_stop_words
 from urllib.parse import urljoin, urlparse
 import maalfrid_toolkit.config as c
 import sys
@@ -15,14 +15,14 @@ def get_html(url):
     else:
         return None
 
-def get_lxml_tree(utf_stream, use_lenient_html_parser=False):
+def get_lxml_tree(utf_string, use_lenient_html_parser=False):
     """ Return a lxml tree for justext (optional: Use a lenient parser to fix broken HTML) """
     if use_lenient_html_parser == True:
-        valid_html = html5lib.parse(utf_stream, treebuilder="lxml", namespaceHTMLElements=False)
-        valid_html_string = lxml.html.tostring(valid_html, encoding="utf-8")
+        valid_html = html5lib.parse(utf_string, treebuilder="lxml", namespaceHTMLElements=False)
+        valid_html_string = lxml.html.tostring(valid_html, encoding="utf-8").decode("utf-8")
         tree = lxml.html.fromstring(valid_html_string)
     else:
-        tree = lxml.html.fromstring(utf_stream)
+        tree = lxml.html.fromstring(utf_string)
     return tree
 
 def get_title(tree):
@@ -83,8 +83,8 @@ def run():
     url = sys.argv[1]
     content_stream = get_html(url)
     if content_stream:
-        utf_stream = convert_encoding(content_stream)
-        tree = get_lxml_tree(utf_stream)
+        utf_string = detect_and_decode(content_stream)
+        tree = get_lxml_tree(utf_string)
         links = get_links(tree, url)
         blocks = removeBP(tree, stop_words=stop_words)
         blocks = "\n".join(blocks)
