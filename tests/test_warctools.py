@@ -93,15 +93,7 @@ def test_maalfrid_record_get_metadata(load_html_warc):
         )
         maalfrid_record.extract_full_text()
         maalfrid_record.extract_metadata()
-        assert maalfrid_record.metadata == {
-            "viewport": "width=device-width, initial-scale=1",
-            "robots": "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
-            "twitter:card": "summary_large_image",
-            "twitter:label1": "Ansl. lesetid",
-            "twitter:data1": "3 minutter",
-            "generator": "WordPress 6.7.2",
-            "msapplication-TileImage": "https://www.nb.no/content/uploads/sites/16/2020/05/nb-logo.png",
-        }
+        assert maalfrid_record.metadata == {'viewport': 'width=device-width, initial-scale=1', 'robots': 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1', 'og:locale': 'nb_NO', 'og:locale:alternate': 'en_GB', 'og:type': 'article', 'og:title': 'Målfrid 2024 – Fritt tilgjengelege tekster frå norske statlege nettsider', 'og:url': 'https://www.nb.no/sprakbanken/ressurskatalog/oai-nb-no-sbr-99/', 'og:site_name': 'Språkbanken', 'article:modified_time': '2025-02-10T09:56:15+00:00', 'twitter:card': 'summary_large_image', 'twitter:label1': 'Ansl. lesetid', 'twitter:data1': '3 minutter', 'generator': 'WordPress 6.7.2', 'msapplication-TileImage': 'https://www.nb.no/content/uploads/sites/16/2020/05/nb-logo.png'}
 
 
 def test_maalfrid_record_get_title(load_html_warc):
