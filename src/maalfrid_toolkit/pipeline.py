@@ -7,7 +7,7 @@ import maalfrid_toolkit.crawl as crawl
 import maalfrid_toolkit.warc_tools as wt
 import maalfrid_toolkit.langdet as langdet
 import maalfrid_toolkit.htmlclean as htmlclean
-from maalfrid_toolkit.utils import convert_encoding, return_all_stop_words
+from maalfrid_toolkit.utils import return_all_stop_words
 import json
 import time
 from tqdm import tqdm

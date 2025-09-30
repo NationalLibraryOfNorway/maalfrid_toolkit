@@ -2,7 +2,7 @@ import argparse
 from maalfrid_toolkit.notram_avisleser import get_text_fitz
 import maalfrid_toolkit.htmlclean as htmlclean
 import maalfrid_toolkit.msword
-from maalfrid_toolkit.utils import convert_encoding, return_all_stop_words
+from maalfrid_toolkit.utils import detect_and_decode, return_all_stop_words
 from maalfrid_toolkit.simhash_docs import compute_simhash
 from warcio.recordloader import ArcWarcRecord
 from warcio.archiveiterator import ArchiveIterator
@@ -74,8 +74,7 @@ class MaalfridWarcRecord(ArcWarcRecord):
         if self.content != None:
             if self.content_type.startswith("text/html"):
                 try:
-                    utf_stream = convert_encoding(self.content)
-                    tree = htmlclean.get_lxml_tree(utf_stream, use_lenient_html_parser=self.use_lenient_html_parser)
+                    tree = htmlclean.get_lxml_tree(self.content, use_lenient_html_parser=self.use_lenient_html_parser)
 
                     # save tree for later use
                     self.html_tree = copy.deepcopy(tree)

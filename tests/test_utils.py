@@ -23,6 +23,6 @@ def test_return_stoplists():
     stoplists = utils.return_stoplists()
     assert isinstance(stoplists, dict)
 
-def test_convert_encoding(old_encoding, new_encoding):
-    assert utils.convert_encoding(old_encoding).decode("utf-8") == 'Æøå må stemme her!'
-    assert utils.convert_encoding(new_encoding).decode("utf-8") == 'Æøå må stemme her!'
+def test_detect_and_decode(old_encoding, new_encoding):
+    assert utils.detect_and_decode(old_encoding) == 'Æøå må stemme her!'
+    assert utils.detect_and_decode(new_encoding) == 'Æøå må stemme her!'

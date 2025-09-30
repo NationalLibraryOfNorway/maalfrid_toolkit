@@ -34,12 +34,13 @@ def return_stoplists():
     return stoplists
 
 # INSPIRED BY: https://github.com/bitextor/bitextor/blob/master/bitextor-warc2htmlwarc.py and JUSTEXT
-def convert_encoding(data):
+def detect_and_decode(data):
+    """ This function takes a binary string and tries to guess its encoding, returning a decoded utf8 string """
     if len(data) > 0:
         # first try: strict utf-8
         try:
             decoded = data.decode('utf-8', errors='strict')
-            return data
+            return decoded
         except:
             pass
 
@@ -54,14 +55,14 @@ def convert_encoding(data):
         for enc in try_encs:
             try:
                 decoded = data.decode(enc)
-                return decoded.encode('utf-8')
+                return decoded
             except:
                 pass
 
         # last fallback: utf-8 with replacements
         try:
             decoded = data.decode('utf-8', errors='replace')
-            return decoded.encode('utf-8')
+            return decoded
         except:
             pass
 

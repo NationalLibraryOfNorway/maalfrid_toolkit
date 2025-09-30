@@ -1,8 +1,10 @@
 import requests
 import html5lib
+from html5lib.constants import DataLossWarning
 import lxml.html
 import justext
-from maalfrid_toolkit.utils import convert_encoding, return_all_stop_words
+import warnings
+from maalfrid_toolkit.utils import detect_and_decode, return_all_stop_words
 from urllib.parse import urljoin, urlparse
 import maalfrid_toolkit.config as c
 import sys
@@ -16,13 +18,25 @@ def get_html(url):
         return None
 
 def get_lxml_tree(utf_stream, use_lenient_html_parser=False):
-    """ Return a lxml tree for justext (optional: Use a lenient parser to fix broken HTML) """
+    """ Takes a binary string, return a lxml tree for justext (optional: Use a lenient parser to fix broken HTML) """
+
+    utf_string = detect_and_decode(utf_stream)
+
     if use_lenient_html_parser == True:
-        valid_html = html5lib.parse(utf_stream, treebuilder="lxml", namespaceHTMLElements=False)
-        valid_html_string = lxml.html.tostring(valid_html, encoding="utf-8")
+        # ignore XHTML to HTML conversion warnings
+        with warnings.catch_warnings():
+            warnings.filterwarnings("ignore", category=DataLossWarning)
+            valid_html = html5lib.parse(utf_string, treebuilder="lxml", namespaceHTMLElements=False)
+
+        valid_html_string = lxml.html.tostring(valid_html, encoding="utf-8").decode("utf-8")
         tree = lxml.html.fromstring(valid_html_string)
     else:
-        tree = lxml.html.fromstring(utf_stream)
+        # if XHTML and containing encoding declaration, lxml.html.fromstring will raise
+        # a ValuError if given a utf8 string: in that case, pass the original binary stream and decode using the encoding declaration
+        try:
+            tree = lxml.html.fromstring(utf_string)
+        except ValueError:
+            tree = lxml.html.fromstring(utf_stream)
     return tree
 
 def get_title(tree):
@@ -83,8 +97,7 @@ def run():
     url = sys.argv[1]
     content_stream = get_html(url)
     if content_stream:
-        utf_stream = convert_encoding(content_stream)
-        tree = get_lxml_tree(utf_stream)
+        tree = get_lxml_tree(content_stream)
         links = get_links(tree, url)
         blocks = removeBP(tree, stop_words=stop_words)
         blocks = "\n".join(blocks)
