@@ -121,8 +121,11 @@ class MaalfridWarcRecord(ArcWarcRecord):
 
     def extract_metadata(self):
         # extract document title and metadata
-        self.title = htmlclean.get_title(self.html_tree)
-        self.metadata = htmlclean.get_metadata(self.html_tree)
+        try:
+            self.title = htmlclean.get_title(self.html_tree)
+            self.metadata = htmlclean.get_metadata(self.html_tree)
+        except Exception as e:
+            logger.warning("problem extracting metadata... in record-id %s in file %s", self.rec_headers.get('WARC-Record-ID'), self.warc_file_name)
 
     def estimate_date(self):
         if self.content != None:
