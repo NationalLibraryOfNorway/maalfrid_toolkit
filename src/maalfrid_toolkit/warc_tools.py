@@ -74,8 +74,7 @@ class MaalfridWarcRecord(ArcWarcRecord):
         if self.content != None:
             if self.content_type.startswith("text/html"):
                 try:
-                    utf_string = detect_and_decode(self.content)
-                    tree = htmlclean.get_lxml_tree(utf_string, use_lenient_html_parser=self.use_lenient_html_parser)
+                    tree = htmlclean.get_lxml_tree(self.content, use_lenient_html_parser=self.use_lenient_html_parser)
 
                     # save tree for later use
                     self.html_tree = copy.deepcopy(tree)
