@@ -130,6 +130,7 @@ def parse_args():
     parser.add_argument('--lid_engine', type=str, default="textcat", help='Default engine for language identification')
     parser.add_argument('--verbose', action='store_true', help="Print language statistics for each response.")
     parser.add_argument('--to_jsonl', action='store_true', help="Dump result as JSONL to STDOUT.")
+    parser.add_argument('--extract_metadata', action='store_true', help="Extract metadata and infer document publish date.")
     args = parser.parse_args()
 
     if not args.url and not args.warc_file:
@@ -171,6 +172,11 @@ def run(args):
                 for record in tqdm(wt.filter_warc(stream, content_types, arc2warc=True), total=total_count):
                     maalfrid_record = wt.convert_to_maalfrid_record(record, warc_file_name=args.warc_file, use_lenient_html_parser=args.use_lenient_html_parser, calculate_simhash=args.calculate_simhash)
                     maalfrid_record.extract_full_text()
+
+                    if args.extract_metadata == True:
+                        maalfrid_record.extract_metadata()
+                        maalfrid_record.estimate_date()
+
                     if args.dedup == True:
                         if maalfrid_record.full_text_hash in hashes:
                             continue
