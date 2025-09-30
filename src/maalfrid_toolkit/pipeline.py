@@ -11,6 +11,10 @@ from maalfrid_toolkit.utils import return_all_stop_words
 import json
 import time
 from tqdm import tqdm
+import logging
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 stop_words = return_all_stop_words()
 hashes = set()
@@ -96,11 +100,11 @@ def document_pipeline(record):
                 print(json.dumps(jsonl))
             return langStr
         elif isinstance(record.full_text, list) and not args.to_jsonl:
-            print("No content left after boilerplate removal!\n")
+            logger.warning("No content left after boilerplate removal!\n")
         elif record.full_text == None and not args.to_jsonl:
-            print("Content could not be extracted.")
+            logger.warning("Content could not be extracted.")
     else:
-        print("No content to parse.\n")
+        logger.warning("No content to parse.\n")
 
     return None
 
