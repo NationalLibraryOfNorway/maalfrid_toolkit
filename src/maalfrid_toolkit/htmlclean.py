@@ -40,20 +40,27 @@ def get_lxml_tree(utf_stream, use_lenient_html_parser=False):
     return tree
 
 def get_title(tree):
-    """ Get the title of the HTML document """
-    title = tree.xpath("//title/text()")
-    title_text = title[0].strip() if title else None
+    if isinstance(tree, lxml.html.HtmlElement):
+        """ Get the title of the HTML document """
+        title = tree.xpath("//title/text()")
+        title_text = title[0].strip() if title else None
+    else:
+        title_text = None
+    
     return title_text
 
 def get_metadata(tree):
     """ Get other metadata from the HTML document """
-    meta_tags = {}
-    for meta in tree.xpath("//meta[@name and @content]"):
-        name = meta.attrib["name"]
-        content = meta.attrib["content"]
-        meta_tags[name] = content
-
-    return meta_tags
+    if isinstance(tree, lxml.html.HtmlElement):
+        meta_tags = {}
+        for meta in tree.xpath("//meta[@content and (@name or @property)]"):
+            key = meta.attrib.get("name") or meta.attrib.get("property")
+            content = meta.attrib["content"]
+            meta_tags[key] = content
+    else:
+        meta_tags = None
+    
+    return meta_tags or None
 
 def get_links(html, this_url):
     """ Extract links from a HTML page """
