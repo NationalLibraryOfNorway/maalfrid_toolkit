@@ -58,7 +58,7 @@ class MaalfridWarcRecord(ArcWarcRecord):
         try:
             self.content = self.content_stream().read()
         except:
-            logger.warning("problem reading content stream... skipping", self.rec_headers.get('WARC-Record-ID'))
+            logger.warning("problem reading content stream... skipping record-id: %s", self.rec_headers.get('WARC-Record-ID'))
 
     def _get_content_hash(self):
         if self.content != None:
@@ -71,7 +71,7 @@ class MaalfridWarcRecord(ArcWarcRecord):
                 try:
                     fulltext_id, self.simhash_value, self.simhash_value_bit = compute_simhash(fulltext_id=self.full_text_hash, doc='\n'.join(self.full_text))
                 except Exception as e:
-                    logger.warning("could not create simhash... simhash will be None", self.rec_headers.get('WARC-Record-ID'))
+                    logger.warning("could not create simhash... simhash will be None in record-id: %s", self.rec_headers.get('WARC-Record-ID'))
                     pass
 
     def _extract_full_text(self):
@@ -86,7 +86,7 @@ class MaalfridWarcRecord(ArcWarcRecord):
                     # extract fulltext
                     self.full_text = htmlclean.removeBP(tree, stop_words=stop_words)
                 except Exception as e:
-                    logger.warning("problem loading HTML... skipping", self.rec_headers.get('WARC-Record-ID'), self.warc_file_name)
+                    logger.warning("problem loading HTML... skipping record-id %s in file %s", self.rec_headers.get('WARC-Record-ID'), self.warc_file_name)
             elif self.content_type.startswith("application/msword") or self.content_type.startswith("application/vnd.openxmlformats-officedocument.wordprocessingml.document") or self.content_type.startswith("application/vnd.oasis.opendocument.text-master"):
                 try:
                     urn = self.rec_headers.get('WARC-Record-ID')
@@ -94,7 +94,7 @@ class MaalfridWarcRecord(ArcWarcRecord):
                     if text != None:
                         self.full_text = text.split("\n")
                 except Exception as e:
-                    logger.warning("problem loading DOC... skipping", self.rec_headers.get('WARC-Record-ID'), self.warc_file_name)
+                    logger.warning("problem loading DOC... skipping record-id %s in file %s", self.rec_headers.get('WARC-Record-ID'), self.warc_file_name)
             elif self.content_type.startswith("application/pdf"):
                 try:
                     pdf_stream = BytesIO(self.content)
@@ -105,7 +105,7 @@ class MaalfridWarcRecord(ArcWarcRecord):
                         self.full_text = text.replace("\x00", "\uFFFD")
                         self.full_text = self.full_text.split("\n")
                 except Exception as e:
-                    logger.warning("problem loading PDF... skipping", self.rec_headers.get('WARC-Record-ID'), self.warc_file_name)
+                    logger.warning("problem loading PDF... skipping record-id %s in file %s", self.rec_headers.get('WARC-Record-ID'), self.warc_file_name)
 
     def _get_full_text_hash(self):
         if self.full_text != None:
@@ -130,7 +130,7 @@ class MaalfridWarcRecord(ArcWarcRecord):
                 try:
                     self.estimated_date = find_date(self.html_tree)
                 except Exception as e:
-                    logger.warning("problem guessing date...", self.rec_headers.get('WARC-Record-ID'), self.warc_file_name)
+                    logger.warning("problem guessing date... in record-id %s in file %s", self.rec_headers.get('WARC-Record-ID'), self.warc_file_name)
 
     def to_dict(self):
         return {'url': self.url, 'crawl-date': self.rec_headers.get('WARC-Date'), 'estimated-date': self.estimated_date, 'content_type': self.content_type, 'title': self.title, 'metadata': self.metadata, 'fulltext': self.full_text, 'full_text_hash': self.full_text_hash, "simhash": self.simhash_value if self.calculate_simhash == True else None}
@@ -191,7 +191,7 @@ def warc_dedup(files):
                                 # write the WARC record to the new file
                                 warc_writer.write_record(record)
                     except:
-                        logger.warning("error in ", file)
+                        logger.warning("error in %s", file)
                         pass
 
 def filter_warc(stream, content_types=["text/html"], arc2warc=False):
