@@ -123,7 +123,10 @@ class MaalfridWarcRecord(ArcWarcRecord):
     def estimate_date(self):
         if self.content != None:
             if self.content_type.startswith("text/html"):
-                self.estimated_date = find_date(self.html_tree)
+                try:
+                    self.estimated_date = find_date(self.html_tree)
+                except Exception as e:
+                    print("problem guessing date...", self.rec_headers.get('WARC-Record-ID'), self.warc_file_name)
 
     def to_dict(self):
         return {'url': self.url, 'crawl-date': self.rec_headers.get('WARC-Date'), 'estimated-date': self.estimated_date, 'content_type': self.content_type, 'title': self.title, 'metadata': self.metadata, 'fulltext': self.full_text, 'full_text_hash': self.full_text_hash, "simhash": self.simhash_value if self.calculate_simhash == True else None}
