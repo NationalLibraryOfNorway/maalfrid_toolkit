@@ -80,7 +80,7 @@ def language_filter(text):
     else:
         return None
 
-def run_fasttext(text, print_confidence=False, threshold=0.7):
+def run_fasttext(text, print_confidence=False, threshold=None):
     glotlid_model = get_glotlid_model()
     predictions = glotlid_model.predict(text)
     lang = str(predictions[0][0]).replace("__label__", "")
