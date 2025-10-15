@@ -36,6 +36,7 @@ dependencies = [
     "simhash>=2.1.2",
     "python-dotenv>=1.0.1",
     "htmldate>=1.9.3",
+    "beautifulsoup4>=4.14.2",
 ]
 requires-python = ">=3.10,<3.13"
 readme = "README.md"
