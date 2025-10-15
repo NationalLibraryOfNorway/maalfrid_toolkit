@@ -5,10 +5,25 @@
 groups = ["default", "dev"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:6b9a2971e5c46474fad0b7c8cdbb86f5ad9d72e86cbd4130e2d2b6e7aabc68b4"
+content_hash = "sha256:6db44c5cd1b47cb511f00410c911fd4c1ac7922795b75d71c64cf89f709023b1"
 
 [[metadata.targets]]
 requires_python = ">=3.10,<3.13"
+
+[[package]]
+name = "beautifulsoup4"
+version = "4.14.2"
+requires_python = ">=3.7.0"
+summary = "Screen-scraping library"
+groups = ["default"]
+dependencies = [
+    "soupsieve>1.2",
+    "typing-extensions>=4.0.0",
+]
+files = [
+    {file = "beautifulsoup4-4.14.2-py3-none-any.whl", hash = "sha256:5ef6fa3a8cbece8488d66985560f97ed091e22bbc4e9c2338508a9d5de6d4515"},
+    {file = "beautifulsoup4-4.14.2.tar.gz", hash = "sha256:2a98ab9f944a11acee9cc848508ec28d9228abfd522ef0fad6a02a72e0ded69e"},
+]
 
 [[package]]
 name = "certifi"

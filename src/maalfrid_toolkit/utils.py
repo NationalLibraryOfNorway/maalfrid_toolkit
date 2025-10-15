@@ -1,4 +1,5 @@
 import cchardet
+from bs4 import UnicodeDammit
 import os
 import maalfrid_toolkit.config as c
 
@@ -33,37 +34,12 @@ def return_stoplists():
         stoplists[stoplist_lang] = get_stoplist(stoplist_lang)
     return stoplists
 
-# INSPIRED BY: https://github.com/bitextor/bitextor/blob/master/bitextor-warc2htmlwarc.py and JUSTEXT
 def detect_and_decode(data):
-    """ This function takes a binary string and tries to guess its encoding, returning a decoded utf8 string """
+    """ This function uses BeautifulSoup's UnicodeDammit to decode an HTML string"""
     if len(data) > 0:
-        # first try: strict utf-8
         try:
-            decoded = data.decode('utf-8', errors='strict')
-            return decoded
+            html = UnicodeDammit(data)
+            return html.unicode_markup
         except:
-            pass
-
-        # guess encoding, try fallback encodings
-        try_encs = ['iso-8859-1', 'windows‑1252']
-        try:
-            encoding = cchardet.detect(data)['encoding']
-            try_encs.insert(0, encoding)
-        except:
-            pass
-
-        for enc in try_encs:
-            try:
-                decoded = data.decode(enc)
-                return decoded
-            except:
-                pass
-
-        # last fallback: utf-8 with replacements
-        try:
-            decoded = data.decode('utf-8', errors='replace')
-            return decoded
-        except:
-            pass
-
+            return None
     return None
