@@ -3,18 +3,13 @@ from maalfrid_toolkit.utils import return_all_stop_words
 import maalfrid_toolkit.htmlclean as htmlclean
 
 def test_get_lxml_tree_with_broken_html(broken_html):
-    """ LXML should be able to deal with (somewhat) broken HTML"""
+    """ LXML/Html5lib should be able to deal with (somewhat) broken HTML"""
     parsed_html = htmlclean.get_lxml_tree(broken_html, use_lenient_html_parser=False)
+    parsed_html_lenient = htmlclean.get_lxml_tree(broken_html, use_lenient_html_parser=True)
 
     # ensure function got the h1 element right
     assert parsed_html.xpath('//h1')[0].text == "Hello World"
-
-def test_get_lxml_tree_with_broken_html(broken_html):
-    """ Html5lib should be able to deal with (somewhat) broken HTML"""
-    parsed_html = htmlclean.get_lxml_tree(broken_html, use_lenient_html_parser=True)
-
-    # ensure function got the h1 element right
-    assert parsed_html.xpath('//h1')[0].text == "Hello World"
+    assert parsed_html_lenient.xpath('//h1')[0].text == "Hello World"
 
 def test_get_lxml_tree_with_string():
     """ get_lxml_tree() should ONLY accept byte strings """
@@ -24,39 +19,29 @@ def test_get_lxml_tree_with_string():
 
 def test_get_lxml_tree_wrong_decoding_declaration(html_wrong_encoding_declaration, html_wrong_encoding_declaration_text_content):
     parsed_html = htmlclean.get_lxml_tree(html_wrong_encoding_declaration, use_lenient_html_parser=False)
+    parsed_html_lenient = htmlclean.get_lxml_tree(html_wrong_encoding_declaration, use_lenient_html_parser=True)
 
     # ensure LXML.html.fromstring does not try to use the faulty encoding declaration
     assert parsed_html.text_content() == html_wrong_encoding_declaration_text_content
-
-def test_get_lxml_tree_wrong_decoding_declaration_lenient(html_wrong_encoding_declaration, html_wrong_encoding_declaration_text_content):
-    parsed_html = htmlclean.get_lxml_tree(html_wrong_encoding_declaration, use_lenient_html_parser=True)
-
-    # ensure LXML.html.fromstring does not try to use the faulty encoding declaration
-    assert parsed_html.text_content() == html_wrong_encoding_declaration_text_content
+    assert parsed_html_lenient.text_content() == html_wrong_encoding_declaration_text_content
 
 def test_get_lxml_tree_with_xhtml_encoding_declaration(xhtml_unicode_string_with_encoding_declaration, xhtml_unicode_string_with_encoding_declaration_text_content):
     parsed_html = htmlclean.get_lxml_tree(xhtml_unicode_string_with_encoding_declaration, use_lenient_html_parser=False)
+    parsed_html_lenient = htmlclean.get_lxml_tree(xhtml_unicode_string_with_encoding_declaration, use_lenient_html_parser=True)
     assert parsed_html.text_content() == xhtml_unicode_string_with_encoding_declaration_text_content
-
-def test_get_lxml_tree_with_xhtml_encoding_declaration_lenient(xhtml_unicode_string_with_encoding_declaration, xhtml_unicode_string_with_encoding_declaration_text_content):
-    parsed_html = htmlclean.get_lxml_tree(xhtml_unicode_string_with_encoding_declaration, use_lenient_html_parser=True)
-    assert parsed_html.text_content() == xhtml_unicode_string_with_encoding_declaration_text_content
+    assert parsed_html_lenient.text_content() == xhtml_unicode_string_with_encoding_declaration_text_content
 
 def test_get_lxml_tree_with_xhtml_wrong_encoding_declaration(xhtml_unicode_string_with_wrong_encoding_declaration, xhtml_unicode_string_with_wrong_encoding_declaration_text_content):
     parsed_html = htmlclean.get_lxml_tree(xhtml_unicode_string_with_wrong_encoding_declaration, use_lenient_html_parser=False)
+    parsed_html_lenient = htmlclean.get_lxml_tree(xhtml_unicode_string_with_wrong_encoding_declaration, use_lenient_html_parser=True)
     assert parsed_html.text_content() == xhtml_unicode_string_with_wrong_encoding_declaration_text_content
+    assert parsed_html_lenient.text_content() == xhtml_unicode_string_with_wrong_encoding_declaration_text_content
 
-def test_get_lxml_tree_with_xhtml_wrong_encoding_declaration_lenient(xhtml_unicode_string_with_wrong_encoding_declaration, xhtml_unicode_string_with_wrong_encoding_declaration_text_content):
-    parsed_html = htmlclean.get_lxml_tree(xhtml_unicode_string_with_wrong_encoding_declaration, use_lenient_html_parser=True)
-    assert parsed_html.text_content() == xhtml_unicode_string_with_wrong_encoding_declaration_text_content
-
-def test_get_lxml_tree_with_html_encoding_invalid_bytestring(html_encoding_declaration_invalid_bytestring):
+def test_get_lxml_tree_with_html_encoding_invalid_bytestring(html_encoding_declaration_invalid_bytestring, html_encoding_declaration_invalid_bytestring_text_content):
     parsed_html = htmlclean.get_lxml_tree(html_encoding_declaration_invalid_bytestring, use_lenient_html_parser=False)
-    assert parsed_html.text_content() == ""
-
-# def test_get_lxml_tree_with_xhtml_encoding_declaration_wrong_bytestring_lenient(xhtml_invalid_unicode_byte_string_with_encoding_declaration):
-#     parsed_html = htmlclean.get_lxml_tree(xhtml_invalid_unicode_byte_string_with_encoding_declaration, use_lenient_html_parser=True)
-#     assert parsed_html.text_content() == ""
+    parsed_html_lenient = htmlclean.get_lxml_tree(html_encoding_declaration_invalid_bytestring, use_lenient_html_parser=True)
+    assert parsed_html.text_content() == html_encoding_declaration_invalid_bytestring_text_content
+    assert parsed_html_lenient.text_content() == html_encoding_declaration_invalid_bytestring_text_content
 
 def test_get_links(links_in_html):
     parsed_html = htmlclean.get_lxml_tree(links_in_html, use_lenient_html_parser=False)
