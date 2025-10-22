@@ -17,26 +17,32 @@ def get_html(url):
     else:
         return None
 
-def get_lxml_tree(utf_stream, use_lenient_html_parser=False):
+def get_lxml_tree(utf_stream: bytes, use_lenient_html_parser: bool=False):
     """ Takes a binary string, return a lxml tree for justext (optional: Use a lenient parser to fix broken HTML) """
+
+    if not isinstance(utf_stream, (bytes, bytearray)):
+        raise TypeError(f"utf_stream must be bytes, not {type(utf_stream).__name__}")
 
     utf_string = detect_and_decode(utf_stream)
 
-    if use_lenient_html_parser == True:
+    # try to detect XHTML
+    looks_like_xhtml = utf_string.lstrip().startswith("<?xml")
+
+    if use_lenient_html_parser == True and not looks_like_xhtml:
         # ignore XHTML to HTML conversion warnings
         with warnings.catch_warnings():
             warnings.filterwarnings("ignore", category=DataLossWarning)
             valid_html = html5lib.parse(utf_string, treebuilder="lxml", namespaceHTMLElements=False)
 
-        valid_html_string = lxml.html.tostring(valid_html, encoding="utf-8").decode("utf-8")
-        tree = lxml.html.fromstring(valid_html_string)
-    else:
-        # if XHTML and containing encoding declaration, lxml.html.fromstring will raise
-        # a ValuError if given a utf8 string: in that case, pass the original binary stream and decode using the encoding declaration
-        try:
-            tree = lxml.html.fromstring(utf_string)
-        except ValueError:
-            tree = lxml.html.fromstring(utf_stream)
+        utf_stream = lxml.html.tostring(valid_html, encoding="utf-8")
+        utf_string = utf_stream.decode("utf-8")
+
+    # if XHTML and containing encoding declaration, lxml.html.fromstring will raise
+    # a ValuError if given a utf8 string: in that case, pass the original binary stream and decode using the encoding declaration
+    try:
+        tree = lxml.html.fromstring(utf_string)
+    except ValueError:
+        tree = lxml.html.fromstring(utf_stream)
     return tree
 
 def get_title(tree):
