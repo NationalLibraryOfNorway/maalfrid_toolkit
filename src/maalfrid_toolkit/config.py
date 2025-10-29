@@ -28,6 +28,7 @@ SUPPORTED_CONTENT_TYPES = ['text/html', 'application/pdf', 'application/msword',
 user_agent = os.getenv("MAALFRID_TOOLKIT_USER_AGENT", "test-agent")
 prefix = os.getenv("MAALFRID_TOOLKIT_CRAWL_PREFIX", "test-prefix")
 crawlhost = os.getenv("MAALFRID_TOOLKIT_CRAWL_HOST", 'localhost')
+wget_location = os.getenv("MAALFRID_TOOLKIT_WGET_LOCATION", "wget")
 
 # DB options (use environment variables)
 database = os.getenv("MAALFRID_TOOLKIT_POSTGRES_DB", "")

@@ -215,7 +215,7 @@ def run_wget(crawljob_config):
 
     # initiate wget using subprocess
     try:
-        args = ['wget', '--config=%s/wget_warc.conf' % (path_to_crawljobs_folder), '--level=%s' % (crawljob_config["crawl_depth"]), *([span_hosts_clause] if span_hosts_clause else []), *([robotstxt_clause] if robotstxt_clause else []), '-P%s/tempstore' % (path_to_output_folder), '-D%s' % (crawljob_config["domain"]), *([exclude_subdomains_clause] if exclude_subdomains_clause else []), *([exclude_paths_clause] if exclude_paths_clause else []), *([exclude_urls_clause] if exclude_urls_clause else []), '--warc-file=%s/%s' % (path_to_output_folder, warc_filename), crawljob_config["seed"]]
+        args = [c.wget_location, '--config=%s/wget_warc.conf' % (path_to_crawljobs_folder), '--level=%s' % (crawljob_config["crawl_depth"]), *([span_hosts_clause] if span_hosts_clause else []), *([robotstxt_clause] if robotstxt_clause else []), '-P%s/tempstore' % (path_to_output_folder), '-D%s' % (crawljob_config["domain"]), *([exclude_subdomains_clause] if exclude_subdomains_clause else []), *([exclude_paths_clause] if exclude_paths_clause else []), *([exclude_urls_clause] if exclude_urls_clause else []), '--warc-file=%s/%s' % (path_to_output_folder, warc_filename), crawljob_config["seed"]]
 
         # write log entry
         event_start_log = {"instance_id": instance_id, "crawler": "wget", "jobid": crawljob_config["jobid"], "domain": crawljob_config["domain"], "event": "start", "timestamp": timestamp_string, "args": ' '.join(args)}
