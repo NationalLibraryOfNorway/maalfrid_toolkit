@@ -61,6 +61,12 @@ python -m maalfrid_toolkit.pipeline --warc_file example_com-00000.warc.gz --calc
 python -m maalfrid_toolkit.pipeline --url https://example.com/sitemap.xml --crawl_sitemap --to_jsonl > example.jsonl
 ```
 
+## Useful extraction otpions
+- __mode__: Choose between 'precision' (default) and 'recall'. Recall will give you more language content but probably at the expense of more noise.
+- __use_lenient_html_parser__: Use a lenient HTML parser to fix broken HTML (more expensive).
+- __extract_metadata__: Extract metadata from the document and try to infer document publish date.
+
+
 ## Database (Postgres)
 
 If you want to store and process the data further in a database, setup a Postgres database and enter your credentials in an .env file in the package root directory (see env-example). Be sure to populate the database with schema and indices found in db/ prior to running the commands in maalfrid_toolkit.db.
