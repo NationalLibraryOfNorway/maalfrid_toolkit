@@ -112,7 +112,7 @@ def process_url(url, args):
     response = wt.make_request(url)
     if response:
         record = wt.create_record(url, response)
-        maalfrid_record = wt.convert_to_maalfrid_record(record, use_lenient_html_parser=args.use_lenient_html_parser, calculate_simhash=args.calculate_simhash)
+        maalfrid_record = wt.convert_to_maalfrid_record(record, use_lenient_html_parser=args.use_lenient_html_parser, calculate_simhash=args.calculate_simhash, mode=args.mode)
         maalfrid_record.extract_full_text()
         maalfrid_record.extract_metadata()
         maalfrid_record.estimate_date()
