@@ -7,13 +7,29 @@ crawl_id = 1
 num_parallel_processes = 5
 
 # Justext options
-MAX_LINK_DENSITY = 0.4
-MAX_HEADING_DISTANCE = 150
-LENGTH_LOW = 70
-LENGTH_HIGH = 200
-STOPWORDS_LOW = 0.30
-STOPWORDS_HIGH = 0.32
-NO_HEADINGS = False
+## The default set of options used in Maalfrid since 2020
+JUSTEXT_CONFIG_PRECISION = {
+    "MAX_LINK_DENSITY": 0.4,
+    "MAX_HEADING_DISTANCE": 150,
+    "LENGTH_LOW": 70,
+    "LENGTH_HIGH": 200,
+    "STOPWORDS_LOW": 0.30,
+    "STOPWORDS_HIGH": 0.32,
+    "NO_HEADINGS": False
+}
+
+## A more recall-optimized set of options
+JUSTEXT_CONFIG_RECALL = {
+    "MAX_LINK_DENSITY": 0.4,
+    "MAX_HEADING_DISTANCE": 150,
+    "LENGTH_LOW": 70,
+    "LENGTH_HIGH": 140,
+    "STOPWORDS_LOW": 0.2,
+    "STOPWORDS_HIGH": 0.3,
+    "NO_HEADINGS": False
+}
+
+JUSTEXT_CONFIG_SETS = { "precision": JUSTEXT_CONFIG_PRECISION, "recall": JUSTEXT_CONFIG_RECALL, }
 
 # DIR
 current_dir = os.path.dirname(os.path.abspath(__file__))

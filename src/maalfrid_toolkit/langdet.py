@@ -127,7 +127,8 @@ def langdet(docId="", paras=[], stop_word_filter=True, apply_language_filter=Tru
             for stoplist in c.stopword_filters:
                 stop_density = get_stopword_density(stoplist=stoplists[stoplist], text=line)
 
-                if stop_density >= c.STOPWORDS_LOW and tokens > 10:
+                # we favor a stop word density higher than 0.3 and more than 10 tokens
+                if stop_density >= c.JUSTEXT_CONFIG_PRECISION["STOPWORDS_LOW"] and tokens > 10:
                     # lowercase the line (and ensure no line breaks)
                     linelang = detect_language(line.lower().replace("\n", " "))
                     break

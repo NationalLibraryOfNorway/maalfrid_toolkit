@@ -91,10 +91,14 @@ def get_links(html, this_url):
 
     return found_links
 
-def removeBP(lxml_tree, stop_words):
+def removeBP(lxml_tree, stop_words, mode="precision"):
     """ Expects a lxml tree and a stop words list """
+
+    # select appropriate config set (default is "precision")
+    justext_cfg = c.JUSTEXT_CONFIG_SETS.get(mode, c.JUSTEXT_CONFIG_PRECISION)
+
     if lxml_tree is not None:
-        paragraphs = justext.justext(lxml_tree, stop_words, encoding='utf-8', length_low=c.LENGTH_LOW, length_high=c.LENGTH_HIGH, stopwords_low=c.STOPWORDS_LOW, stopwords_high=c.STOPWORDS_HIGH, max_link_density=c.MAX_LINK_DENSITY, max_heading_distance=c.MAX_HEADING_DISTANCE, no_headings=c.NO_HEADINGS)
+        paragraphs = justext.justext(lxml_tree, stop_words, encoding='utf-8', length_low=justext_cfg["LENGTH_LOW"], length_high=justext_cfg["LENGTH_HIGH"], stopwords_low=justext_cfg["STOPWORDS_LOW"], stopwords_high=justext_cfg["STOPWORDS_HIGH"], max_link_density=justext_cfg["MAX_LINK_DENSITY"], max_heading_distance=justext_cfg["MAX_HEADING_DISTANCE"], no_headings=justext_cfg["NO_HEADINGS"])
         return [paragraph["text"] for paragraph in paragraphs if paragraph["class"] == "good"]
     else:
         return ['']
