@@ -28,6 +28,10 @@ class MaalfridWarcRecord(ArcWarcRecord):
         self.warc_file_name = kwargs.pop('warc_file_name', None)
         self.use_lenient_html_parser = kwargs.pop('use_lenient_html_parser', False)
         self.calculate_simhash = kwargs.pop('calculate_simhash', False)
+        mode = kwargs.pop('mode', 'precision') 
+        if mode not in ("precision", "recall"): 
+            raise ValueError(f"Unknown mode: {mode}")
+        self.mode = mode
         super(MaalfridWarcRecord, self).__init__(*args, **kwargs)
         self.url = self.rec_headers.get('WARC-Target-URI')
         self.content_type = ''
@@ -84,7 +88,7 @@ class MaalfridWarcRecord(ArcWarcRecord):
                     self.html_tree = copy.deepcopy(tree)
 
                     # extract fulltext
-                    self.full_text = htmlclean.removeBP(tree, stop_words=stop_words)
+                    self.full_text = htmlclean.removeBP(tree, stop_words=stop_words, mode=self.mode)
                 except Exception as e:
                     logger.warning("problem loading HTML... skipping record-id %s in file %s", self.rec_headers.get('WARC-Record-ID'), self.warc_file_name)
             elif self.content_type.startswith("application/msword") or self.content_type.startswith("application/vnd.openxmlformats-officedocument.wordprocessingml.document") or self.content_type.startswith("application/vnd.oasis.opendocument.text-master"):
@@ -112,7 +116,7 @@ class MaalfridWarcRecord(ArcWarcRecord):
             self.full_text_hash = hashlib.sha1('\n'.join(self.full_text).encode("utf-8")).hexdigest()
 
     def extract_full_text(self):
-        """ RUn out full-text extraction """
+        """ Run out full-text extraction """
         self._extract_full_text()
         self._get_full_text_hash()
 
@@ -138,8 +142,8 @@ class MaalfridWarcRecord(ArcWarcRecord):
     def to_dict(self):
         return {'url': self.url, 'crawl-date': self.rec_headers.get('WARC-Date'), 'estimated-date': self.estimated_date, 'content_type': self.content_type, 'title': self.title, 'metadata': self.metadata, 'fulltext': self.full_text, 'full_text_hash': self.full_text_hash, "simhash": self.simhash_value if self.calculate_simhash == True else None}
 
-def convert_to_maalfrid_record(arc_warc_record, warc_file_id=None, warc_file_name=None, use_lenient_html_parser=False, calculate_simhash=False):
-    return MaalfridWarcRecord(arc_warc_record.format, arc_warc_record.rec_type, arc_warc_record.rec_headers, arc_warc_record.raw_stream, arc_warc_record.http_headers, arc_warc_record.content_type, arc_warc_record.length, warc_file_id=warc_file_id, warc_file_name=warc_file_name, use_lenient_html_parser=use_lenient_html_parser, calculate_simhash=calculate_simhash)
+def convert_to_maalfrid_record(arc_warc_record, warc_file_id=None, warc_file_name=None, use_lenient_html_parser=False, calculate_simhash=False, mode="precision"):
+    return MaalfridWarcRecord(arc_warc_record.format, arc_warc_record.rec_type, arc_warc_record.rec_headers, arc_warc_record.raw_stream, arc_warc_record.http_headers, arc_warc_record.content_type, arc_warc_record.length, warc_file_id=warc_file_id, warc_file_name=warc_file_name, use_lenient_html_parser=use_lenient_html_parser, calculate_simhash=calculate_simhash, mode=mode)
 
 def make_request(url):
     try:

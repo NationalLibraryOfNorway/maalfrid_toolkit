@@ -127,6 +127,7 @@ def parse_args():
     parser.add_argument('--url', type=str, help='A URL to process')
     parser.add_argument('--warc_file', type=str, help='Path to a WARC file')
     parser.add_argument('--crawl_sitemap', action='store_true', help='Use the URL as a seed for crawling (should point to a sitemap)')
+    parser.add_argument( '--mode', choices=['precision', 'recall'], default='precision', help='Choose HTML content extraction mode (default: precision)' )
     parser.add_argument('--use_lenient_html_parser', action='store_true', help="Use a lenient HTML parser to fix broken HTML (more expensive).")
     parser.add_argument('--calculate_simhash', action='store_true', help="Calculate simhash for each record.")
     parser.add_argument('--dedup', action='store_true', help='Do not count exact text duplicates (when using WARC file)')
@@ -174,7 +175,7 @@ def run(args):
                 stream.seek(0)
                     
                 for record in tqdm(wt.filter_warc(stream, content_types, arc2warc=True), total=total_count):
-                    maalfrid_record = wt.convert_to_maalfrid_record(record, warc_file_name=args.warc_file, use_lenient_html_parser=args.use_lenient_html_parser, calculate_simhash=args.calculate_simhash)
+                    maalfrid_record = wt.convert_to_maalfrid_record(record, warc_file_name=args.warc_file, use_lenient_html_parser=args.use_lenient_html_parser, calculate_simhash=args.calculate_simhash, mode=args.mode)
                     maalfrid_record.extract_full_text()
 
                     if args.extract_metadata == True:
