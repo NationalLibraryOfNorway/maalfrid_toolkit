@@ -2,52 +2,46 @@ import pytest
 from maalfrid_toolkit.utils import return_all_stop_words
 import maalfrid_toolkit.htmlclean as htmlclean
 
-@pytest.fixture
-def broken_html():
-    """ This example contains broken HTML (unclosed tags) """
-    return "<html><head><title>Test</title></head><body><h1>Hello World".encode("utf-8")
-
-@pytest.fixture
-def html_wrong_encoding_declaration():
-    return """<!DOCTYPE html><html lang="nn"><head><meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"><title>Nasjonalbiblioteket: Språkbankens ressurskatalog</title></head><body><header><h1>Nasjonalbiblioteket: Språkbankens ressurskatalog</h1><nav><ul><li><a href="#">Språkbanken</a></li><li><a href="#">Nyhende</a></li><li><a href="#">Ressurskatalogen</a></li><li><a href="#">Om Språkbanken</a></li></ul></nav></header><aside><h3>Ressurskatalogen</h3><ul><li><a href="#">CLARINO</a></li><li><a href="#">Felles datakatalog</a></li></ul></aside><main><article><h2>Målfrid 2024 – Fritt tilgjengelege tekster frå norske statlege nettsider</h2><p>Dette korpuset inneheld dokument frå 497 internettdomene tilknytta norske statlege institusjonar. Totalt består materialet av omlag 2,6 milliardar «tokens» (ord og teiknsetting). I tillegg til tekster på bokmål og nynorsk inneheld korpuset tekster på nordsamisk, lulesamisk, sørsamisk og engelsk.</p><p>Dataa vart samla inn som ein lekk i Målfrid-prosjektet, der Nasjonalbiblioteket på vegner av Kulturdepartementet og i samarbeid med Språkrådet haustar og aggregerer tekstdata for å dokumentere bruken av bokmål og nynorsk hjå statlege institusjonar.</p><p>Språkbanken føretok ei fokusert hausting av nettsidene til dei aktuelle institusjonane mellom desember 2023 og januar 2024. Tekstdokument (HTML, DOC(X)/ODT og PDF) vart lasta ned rekursivt frå dei ulike domena, 12 nivå ned på nettsidene. Me tok ålmenne høflegheitsomsyn og respekterte robots.txt.</p></article></main><footer><p>Organisasjonsnummer 976 029 100</p></footer></body></html>""".encode("utf-8")
-
-@pytest.fixture
-def xhtml_unicode_string_with_encoding_declaration():
-    return """<?xml version="1.0" encoding="ISO-8859-1"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"><head><title>Eksempel-XHTML fra Nasjonalbiblioteket</title><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" /><meta property="og:site_name" content="Nasjonalbiblioteket" /</head><body><p>Hello, world! — med ISO‑8859‑1-kodering.</p></body></html>""".encode("utf-8")
-
-@pytest.fixture
-def links_in_html():
-    """ This example contains absolute and relative links in valid HTML """
-    return "<html><body><div>Here is <a href='https://www.nb.no/search'>a</a> link. There is <a href='/sprakbanken'>another one</a>.</div></body></html>".encode("utf-8")
-
-@pytest.fixture
-def html_with_boilerplate():
-    """ This example contains a valid HTML document with article-like text in Norwegian Nynorsk among boilerplate """
-    return """<!DOCTYPE html><html lang="nn"><head><meta charset="UTF-8"><meta property="og:site_name" content="Nasjonalbiblioteket"><meta property="article:modified_time" content="2025-09-30T09:14:25+00:00"><title>Nasjonalbiblioteket: Språkbankens ressurskatalog</title></head><body><header><h1>Nasjonalbiblioteket: Språkbankens ressurskatalog</h1><nav><ul><li><a href="#">Språkbanken</a></li><li><a href="#">Nyhende</a></li><li><a href="#">Ressurskatalogen</a></li><li><a href="#">Om Språkbanken</a></li></ul></nav></header><aside><h3>Ressurskatalogen</h3><ul><li><a href="#">CLARINO</a></li><li><a href="#">Felles datakatalog</a></li></ul></aside><main><article><h2>Målfrid 2024 – Fritt tilgjengelege tekster frå norske statlege nettsider</h2><p>Dette korpuset inneheld dokument frå 497 internettdomene tilknytta norske statlege institusjonar. Totalt består materialet av omlag 2,6 milliardar «tokens» (ord og teiknsetting). I tillegg til tekster på bokmål og nynorsk inneheld korpuset tekster på nordsamisk, lulesamisk, sørsamisk og engelsk.</p><p>Dataa vart samla inn som ein lekk i Målfrid-prosjektet, der Nasjonalbiblioteket på vegner av Kulturdepartementet og i samarbeid med Språkrådet haustar og aggregerer tekstdata for å dokumentere bruken av bokmål og nynorsk hjå statlege institusjonar.</p><p>Språkbanken føretok ei fokusert hausting av nettsidene til dei aktuelle institusjonane mellom desember 2023 og januar 2024. Tekstdokument (HTML, DOC(X)/ODT og PDF) vart lasta ned rekursivt frå dei ulike domena, 12 nivå ned på nettsidene. Me tok ålmenne høflegheitsomsyn og respekterte robots.txt.</p></article></main><footer><p>Organisasjonsnummer 976 029 100</p></footer></body></html>""".encode("utf-8")
-
-def test_get_lxml_tree(broken_html):
+def test_get_lxml_tree_with_broken_html(broken_html):
+    """ LXML/Html5lib should be able to deal with (somewhat) broken HTML"""
     parsed_html = htmlclean.get_lxml_tree(broken_html, use_lenient_html_parser=False)
+    parsed_html_lenient = htmlclean.get_lxml_tree(broken_html, use_lenient_html_parser=True)
 
     # ensure function got the h1 element right
     assert parsed_html.xpath('//h1')[0].text == "Hello World"
+    assert parsed_html_lenient.xpath('//h1')[0].text == "Hello World"
 
-def test_get_lxml_tree_wrong_decoding_declaration(html_wrong_encoding_declaration):
+def test_get_lxml_tree_with_string():
+    """ get_lxml_tree() should ONLY accept byte strings """
+    html_str = "<html><body><p>Hello</p></body></html>"
+    with pytest.raises(TypeError):
+        htmlclean.get_lxml_tree(html_str)
+
+def test_get_lxml_tree_wrong_decoding_declaration(html_wrong_encoding_declaration, html_wrong_encoding_declaration_text_content):
     parsed_html = htmlclean.get_lxml_tree(html_wrong_encoding_declaration, use_lenient_html_parser=False)
+    parsed_html_lenient = htmlclean.get_lxml_tree(html_wrong_encoding_declaration, use_lenient_html_parser=True)
 
     # ensure LXML.html.fromstring does not try to use the faulty encoding declaration
-    assert parsed_html.text_content() == 'Nasjonalbiblioteket: Språkbankens ressurskatalogNasjonalbiblioteket: Språkbankens ressurskatalogSpråkbankenNyhendeRessurskatalogenOm SpråkbankenRessurskatalogenCLARINOFelles datakatalogMålfrid 2024 – Fritt tilgjengelege tekster frå norske statlege nettsiderDette korpuset inneheld dokument frå 497 internettdomene tilknytta norske statlege institusjonar. Totalt består materialet av omlag 2,6 milliardar «tokens» (ord og teiknsetting). I tillegg til tekster på bokmål og nynorsk inneheld korpuset tekster på nordsamisk, lulesamisk, sørsamisk og engelsk.Dataa vart samla inn som ein lekk i Målfrid-prosjektet, der Nasjonalbiblioteket på vegner av Kulturdepartementet og i samarbeid med Språkrådet haustar og aggregerer tekstdata for å dokumentere bruken av bokmål og nynorsk hjå statlege institusjonar.Språkbanken føretok ei fokusert hausting av nettsidene til dei aktuelle institusjonane mellom desember 2023 og januar 2024. Tekstdokument (HTML, DOC(X)/ODT og PDF) vart lasta ned rekursivt frå dei ulike domena, 12 nivå ned på nettsidene. Me tok ålmenne høflegheitsomsyn og respekterte robots.txt.Organisasjonsnummer 976 029 100'
+    assert parsed_html.text_content() == html_wrong_encoding_declaration_text_content
+    assert parsed_html_lenient.text_content() == html_wrong_encoding_declaration_text_content
 
-def test_get_lxml_tree_wrong_decoding_declaration_lenient(html_wrong_encoding_declaration):
-    parsed_html = htmlclean.get_lxml_tree(html_wrong_encoding_declaration, use_lenient_html_parser=True)
-
-    # ensure LXML.html.fromstring does not try to use the faulty encoding declaration
-    assert parsed_html.text_content() == 'Nasjonalbiblioteket: Språkbankens ressurskatalogNasjonalbiblioteket: Språkbankens ressurskatalogSpråkbankenNyhendeRessurskatalogenOm SpråkbankenRessurskatalogenCLARINOFelles datakatalogMålfrid 2024 – Fritt tilgjengelege tekster frå norske statlege nettsiderDette korpuset inneheld dokument frå 497 internettdomene tilknytta norske statlege institusjonar. Totalt består materialet av omlag 2,6 milliardar «tokens» (ord og teiknsetting). I tillegg til tekster på bokmål og nynorsk inneheld korpuset tekster på nordsamisk, lulesamisk, sørsamisk og engelsk.Dataa vart samla inn som ein lekk i Målfrid-prosjektet, der Nasjonalbiblioteket på vegner av Kulturdepartementet og i samarbeid med Språkrådet haustar og aggregerer tekstdata for å dokumentere bruken av bokmål og nynorsk hjå statlege institusjonar.Språkbanken føretok ei fokusert hausting av nettsidene til dei aktuelle institusjonane mellom desember 2023 og januar 2024. Tekstdokument (HTML, DOC(X)/ODT og PDF) vart lasta ned rekursivt frå dei ulike domena, 12 nivå ned på nettsidene. Me tok ålmenne høflegheitsomsyn og respekterte robots.txt.Organisasjonsnummer 976 029 100'
-
-def test_get_lxml_tree_with_xhtml_encoding_declaration(xhtml_unicode_string_with_encoding_declaration):
+def test_get_lxml_tree_with_xhtml_encoding_declaration(xhtml_unicode_string_with_encoding_declaration, xhtml_unicode_string_with_encoding_declaration_text_content):
     parsed_html = htmlclean.get_lxml_tree(xhtml_unicode_string_with_encoding_declaration, use_lenient_html_parser=False)
+    parsed_html_lenient = htmlclean.get_lxml_tree(xhtml_unicode_string_with_encoding_declaration, use_lenient_html_parser=True)
+    assert parsed_html.text_content() == xhtml_unicode_string_with_encoding_declaration_text_content
+    assert parsed_html_lenient.text_content() == xhtml_unicode_string_with_encoding_declaration_text_content
 
-def test_get_lxml_tree_with_xhtml_encoding_declaration_lenient(xhtml_unicode_string_with_encoding_declaration):
-    parsed_html = htmlclean.get_lxml_tree(xhtml_unicode_string_with_encoding_declaration, use_lenient_html_parser=True)
+def test_get_lxml_tree_with_xhtml_wrong_encoding_declaration(xhtml_unicode_string_with_wrong_encoding_declaration, xhtml_unicode_string_with_wrong_encoding_declaration_text_content):
+    parsed_html = htmlclean.get_lxml_tree(xhtml_unicode_string_with_wrong_encoding_declaration, use_lenient_html_parser=False)
+    parsed_html_lenient = htmlclean.get_lxml_tree(xhtml_unicode_string_with_wrong_encoding_declaration, use_lenient_html_parser=True)
+    assert parsed_html.text_content() == xhtml_unicode_string_with_wrong_encoding_declaration_text_content
+    assert parsed_html_lenient.text_content() == xhtml_unicode_string_with_wrong_encoding_declaration_text_content
+
+def test_get_lxml_tree_with_html_encoding_invalid_bytestring(html_encoding_declaration_invalid_bytestring, html_encoding_declaration_invalid_bytestring_text_content):
+    parsed_html = htmlclean.get_lxml_tree(html_encoding_declaration_invalid_bytestring, use_lenient_html_parser=False)
+    parsed_html_lenient = htmlclean.get_lxml_tree(html_encoding_declaration_invalid_bytestring, use_lenient_html_parser=True)
+    assert parsed_html.text_content() == html_encoding_declaration_invalid_bytestring_text_content
+    assert parsed_html_lenient.text_content() == html_encoding_declaration_invalid_bytestring_text_content
 
 def test_get_links(links_in_html):
     parsed_html = htmlclean.get_lxml_tree(links_in_html, use_lenient_html_parser=False)
