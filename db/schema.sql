@@ -17,7 +17,7 @@ CREATE TABLE fulltext (fulltext_id SERIAL PRIMARY KEY, hash text UNIQUE NOT NULL
 CREATE TABLE simhash (fulltext_id INT PRIMARY KEY REFERENCES fulltext(fulltext_id) ON UPDATE CASCADE ON DELETE CASCADE, simhash numeric, simhash_bit bit(64));
 
 -- WARCINFO
-CREATE TABLE warcinfo(running_id SERIAL, crawl_id INT, type text, record_id text, concurrent_to text, target_uri text, date text, content_hash text, payload_digest text, content_type text, content_length bigint, response_mime_type text, response_status text, redirect_location text, warc_file_id int REFERENCES warc_files(warc_file_id), fulltext_id integer REFERENCES fulltext(fulltext_id)) PARTITION BY LIST(crawl_id);
+CREATE TABLE warcinfo(running_id SERIAL, crawl_id INT, type text, record_id text, concurrent_to text, target_uri text, date text, estimated_date text, title text, extracted_metadata jsonb, content_hash text, payload_digest text, content_type text, content_length bigint, response_mime_type text, response_status text, redirect_location text, warc_file_id int REFERENCES warc_files(warc_file_id), fulltext_id integer REFERENCES fulltext(fulltext_id)) PARTITION BY LIST(crawl_id);
 
 -- CREATE PARTITIONS
 CREATE TABLE warcinfo_maalfrid_1 PARTITION OF warcinfo FOR VALUES IN (1);

@@ -1,5 +1,5 @@
 import psycopg2 as pg
-from psycopg2.extras import RealDictCursor
+from psycopg2.extras import RealDictCursor, Json
 import argparse
 import maalfrid_toolkit.config as c
 import maalfrid_toolkit.warc_tools as wt
@@ -18,6 +18,8 @@ def parse_args():
     parser.add_argument('--warc_file', type=str, help='Path to a WARC file')
     parser.add_argument('--use_lenient_html_parser', action='store_true', help="Use a lenient HTML parser to fix broken HTML (more expensive).")
     parser.add_argument('--content_type', type=str, help='Content type to filter on')
+    parser.add_argument( '--mode', choices=['precision', 'recall'], default='precision', help='Choose HTML content extraction mode (default: precision)' )
+    parser.add_argument('--extract_metadata', action='store_true', help="Extract metadata and infer document publish date.")
     parser.add_argument('--insert_new_crawl', action="store_true", help='Insert paths from warcinfo')
     parser.add_argument('--insert_new_simhashes', action="store_true", help='Insert simhashes for new fulltexts')
     parser.add_argument('--detect_near_duplicates', action="store_true", help='Calculate simhash distances and identify near duplicates per domain and document type')
@@ -82,8 +84,8 @@ def write_warc_file(con, warc_file_name):
 def write_warcinfo_record(con, record, fulltext_id):
     """ Writes the warc record to DB """ 
     with con.cursor() as cur:
-        warcinfo_sql = """INSERT INTO warcinfo(crawl_id, type, record_id, concurrent_to, target_uri, date, content_hash, payload_digest, content_type, content_length, response_mime_type, response_status, redirect_location, warc_file_id, fulltext_id)
-        VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);"""
+        warcinfo_sql = """INSERT INTO warcinfo(crawl_id, type, record_id, concurrent_to, target_uri, date, estimated_date, title, extracted_metadata, content_hash, payload_digest, content_type, content_length, response_mime_type, response_status, redirect_location, warc_file_id, fulltext_id)
+        VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);"""
 
         # if response, get metadata from HTTP header, if resource, assume HTML as content type and status 200
         if record.rec_headers.get("WARC-Type") == "response":
@@ -95,7 +97,7 @@ def write_warcinfo_record(con, record, fulltext_id):
             response_status = "200 OK"
             redirect_location = None
 
-        args = (c.crawl_id, record.rec_headers.get('WARC-Type'), record.rec_headers.get('WARC-Record-ID'), record.rec_headers.get('WARC-Concurrent-To'), record.rec_headers.get('WARC-Target-URI'), record.rec_headers.get('WARC-Date'), record.content_hash, record.rec_headers.get('WARC-Payload-Digest'), record.rec_headers.get('Content-Type'), record.rec_headers.get('Content-Length'), response_mime_type, response_status, redirect_location, record.warc_file_id, fulltext_id)
+        args = (c.crawl_id, record.rec_headers.get('WARC-Type'), record.rec_headers.get('WARC-Record-ID'), record.rec_headers.get('WARC-Concurrent-To'), record.rec_headers.get('WARC-Target-URI'), record.rec_headers.get('WARC-Date'), record.estimated_date, record.title, Json(record.metadata), record.content_hash, record.rec_headers.get('WARC-Payload-Digest'), record.rec_headers.get('Content-Type'), record.rec_headers.get('Content-Length'), response_mime_type, response_status, redirect_location, record.warc_file_id, fulltext_id)
 
         cur.execute(warcinfo_sql, args)
 
@@ -415,11 +417,15 @@ def process_warcs(args):
                 warc_file_name = args.warc_file
 
                 for record in wt.filter_warc(stream, content_types):
-                    maalfrid_record = wt.convert_to_maalfrid_record(record, warc_file_id=warc_file_id, warc_file_name=warc_file_name, use_lenient_html_parser=args.use_lenient_html_parser, calculate_simhash=False)
+                    maalfrid_record = wt.convert_to_maalfrid_record(record, warc_file_id=warc_file_id, warc_file_name=warc_file_name, use_lenient_html_parser=args.use_lenient_html_parser, calculate_simhash=False, mode=args.mode)
 
                     # only insert response records with acutal content (records with parsing errors are not inserted, only logged)
                     if maalfrid_record.content != None:
-                        maalfrid_record.extract_full_text()                     
+                        maalfrid_record.extract_full_text()
+
+                        if args.extract_metadata == True:
+                            maalfrid_record.extract_metadata()
+                            maalfrid_record.estimate_date()                     
 
                         if maalfrid_record.full_text != None:
                             try:
