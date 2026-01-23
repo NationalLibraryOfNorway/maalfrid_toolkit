@@ -19,7 +19,8 @@ def parse_args():
     parser.add_argument('--use_lenient_html_parser', action='store_true', help="Use a lenient HTML parser to fix broken HTML (more expensive).")
     parser.add_argument('--content_type', type=str, help='Content type to filter on')
     parser.add_argument( '--mode', choices=['precision', 'recall'], default='precision', help='Choose HTML content extraction mode (default: precision)' )
-    parser.add_argument('--extract_metadata', action='store_true', help="Extract metadata and infer document publish date.")
+    parser.add_argument('--extract_metadata', action='store_true', help="Extract metadata from HTML (simple, fast).")
+    parser.add_argument('--htmldate', action='store_true', help="Try to estimate document publish/update date using htmldate (can be slow).")
     parser.add_argument('--insert_new_crawl', action="store_true", help='Insert paths from warcinfo')
     parser.add_argument('--insert_new_simhashes', action="store_true", help='Insert simhashes for new fulltexts')
     parser.add_argument('--detect_near_duplicates', action="store_true", help='Calculate simhash distances and identify near duplicates per domain and document type')
@@ -425,6 +426,8 @@ def process_warcs(args):
 
                         if args.extract_metadata == True:
                             maalfrid_record.extract_metadata()
+                            
+                        if args.htmldate == True:
                             maalfrid_record.estimate_date()                     
 
                         if maalfrid_record.full_text != None:

@@ -135,7 +135,8 @@ def parse_args():
     parser.add_argument('--lid_engine', type=str, default="textcat", help='Default engine for language identification')
     parser.add_argument('--verbose', action='store_true', help="Print language statistics for each response.")
     parser.add_argument('--to_jsonl', action='store_true', help="Dump result as JSONL to STDOUT.")
-    parser.add_argument('--extract_metadata', action='store_true', help="Extract metadata and infer document publish date.")
+    parser.add_argument('--extract_metadata', action='store_true', help="Extract metadata from HTML (simple, fast).")
+    parser.add_argument('--htmldate', action='store_true', help="Try to estimate document publish/update date using htmldate (can be slow).")
     args = parser.parse_args()
 
     if not args.url and not args.warc_file:
@@ -180,6 +181,8 @@ def run(args):
 
                     if args.extract_metadata == True:
                         maalfrid_record.extract_metadata()
+
+                    if args.htmldate == True:
                         maalfrid_record.estimate_date()
 
                     if args.dedup == True:
