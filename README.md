@@ -1,6 +1,6 @@
 # Maalfrid toolkit
 
-__maalfrid_toolkit__ is a Python package designed for crawling and extracting natural language data from documents found on the web (HTML, PDF, DOC). It is primarily used in the Målfrid project, a collaboration between the National Library of Norway and The Language Council of Norway, which aims to measure the usage of the two official Norwegian language forms, Bokmål and Nynorsk, on Norwegian public sector websites. While the toolkit has a particular emphasis on the Nordic countries, it supports extraction and language detection of more than 60 languages.
+__maalfrid_toolkit__ is a Python package designed for crawling and extracting natural language data from documents found on the web (HTML, PDF, DOC). It is primarily used in the Målfrid project, a collaboration between the National Library of Norway and The Language Council of Norway, which aims to measure the usage of the two official Norwegian language forms, Bokmål and Nynorsk, on Norwegian public sector websites. While the toolkit has a particular emphasis on the Nordic countries, it supports extraction and language detection of more than 60 languages. The maalfrid_toolkit is also used to produce the yearly [Målfrid dataset](https://www.nb.no/sprakbanken/en/resource-catalogue/oai-nb-no-sbr-102/) (freely available documents from Norwegian state institutions).
 
 It builds upon:
 - [wget](https://www.gnu.org/software/wget/) and [(custom) browsertrix](https://github.com/Sprakbanken/browsertrix-crawler/) for crawling

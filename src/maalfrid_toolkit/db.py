@@ -35,9 +35,9 @@ def parse_args():
 
     return args
 
-def db_connect():
+def db_connect(connect_timeout=None):
     """ Establish connection to Postgres base, return a connection object """
-    return pg.connect(dbname=c.database, host=c.host, port=c.port, user=c.user, password=c.password, sslmode=c.sslmode if c.sslmode else None, sslrootcert=c.sslrootcert if c.sslrootcert else None, sslcert=c.sslcert if c.sslcert else None, sslkey=c.sslkey if c.sslkey else None)
+    return pg.connect(dbname=c.database, host=c.host, port=c.port, user=c.user, password=c.password, sslmode=c.sslmode if c.sslmode else None, sslrootcert=c.sslrootcert if c.sslrootcert else None, sslcert=c.sslcert if c.sslcert else None, sslkey=c.sslkey if c.sslkey else None, connect_timeout=connect_timeout)
 
 def check_if_text_in_db(con, record):
     """ Check if the fulltext is already in the db """
