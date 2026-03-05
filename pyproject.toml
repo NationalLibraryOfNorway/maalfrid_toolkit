@@ -1,6 +1,6 @@
 [project]
 name = "maalfrid_toolkit"
-version = "1.5.3"
+version = "1.5.4"
 description = "Toolkit for the Målfrid project"
 authors = [
     {name = "Magnus Breder Birkenes", email = "magnus.birkenes@nb.no"},
@@ -29,7 +29,7 @@ dependencies = [
     "PyMuPDF==1.23.26",
     "pdfminer-six==20201018",
     "sentence-splitter==1.4",
-    "joblib==1.4.2",
+    "joblib>=1.5.3",
     "tqdm>=4.67.1",
     "python-docx>=1.1.2",
     "docx2txt>=0.8",
