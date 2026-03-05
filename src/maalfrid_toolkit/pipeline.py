@@ -12,6 +12,7 @@ import json
 import time
 from tqdm import tqdm
 import logging
+import os
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -125,7 +126,7 @@ def parse_args():
     parser = argparse.ArgumentParser(
         description="Run the Målfrid pipeline on a single URL or on a WARC file")
     parser.add_argument('--url', type=str, help='A URL to process')
-    parser.add_argument('--warc_file', type=str, help='Path to a WARC file')
+    parser.add_argument('--warc_file', nargs='+', help='Path/glob to a WARC file')
     parser.add_argument('--crawl_sitemap', action='store_true', help='Use the URL as a seed for crawling (should point to a sitemap)')
     parser.add_argument( '--mode', choices=['precision', 'recall'], default='precision', help='Choose HTML content extraction mode (default: precision)' )
     parser.add_argument('--use_lenient_html_parser', action='store_true', help="Use a lenient HTML parser to fix broken HTML (more expensive).")
@@ -162,8 +163,14 @@ def run(args):
                 rows.append(row)
 
     elif args.warc_file:
-        if args.warc_file.endswith('.warc.gz') or args.warc_file.endswith('.warc') or args.warc_file.endswith('.arc') or args.warc_file.endswith('.arc.gz'):
-            with open(args.warc_file, 'rb') as stream:
+        for warc_file in args.warc_file:
+            valid_extensions = ('.warc.gz', '.warc', '.arc', '.arc.gz')
+
+            # check filename against each valid extension (WARC/ARC, gzipped/not gzipped)
+            if not warc_file.lower().endswith(valid_extensions):
+                continue
+
+            with open(warc_file, 'rb') as stream:
                 # optional override of content types
                 if args.content_type:
                     content_types = [args.content_type]
@@ -175,7 +182,7 @@ def run(args):
                 # Reset file pointer for reuse
                 stream.seek(0)
                     
-                for record in tqdm(wt.filter_warc(stream, content_types, arc2warc=True), total=total_count):
+                for record in tqdm(wt.filter_warc(stream, content_types, arc2warc=True), total=total_count,  desc=os.path.basename(warc_file)):
                     maalfrid_record = wt.convert_to_maalfrid_record(record, warc_file_name=args.warc_file, use_lenient_html_parser=args.use_lenient_html_parser, calculate_simhash=args.calculate_simhash, mode=args.mode)
                     maalfrid_record.extract_full_text()
 
