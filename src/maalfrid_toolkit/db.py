@@ -113,8 +113,8 @@ def insert_new_crawl():
         cur.execute("""CREATE TEMP TABLE paths_raw(pathid SERIAL, warcinfo_running_id INT, crawl_id INT, path TEXT, domainid INT, fulltext_id INT);""")
         cur.execute("""INSERT INTO paths_raw(warcinfo_running_id, crawl_id, path, domainid, fulltext_id)
                 SELECT running_id, crawl_id, regexp_replace(target_uri, '^https?\\:\\/\\/', ''), domainid, fulltext_id FROM warcinfo w
-                JOIN domains d ON d.domain = reverse(split_part(reverse(substring(target_uri from '(?:.*://)?([^:/?]*)')), '.', 2)) || '.' || reverse(split_part(reverse(substring(target_uri from '(?:.*://)?([^:/?]*)')), '.', 1))
-                WHERE response_status LIKE '200%%' and fulltext_id != 1 and crawl_id = %s;""", (c.crawl_id,))
+                    JOIN domains d ON d.domain = substring(substring(target_uri FROM 'https?://([^:/?#]+)') FROM '([^.]+\.[^.]+)$')
+                    WHERE response_status LIKE '200%%' and fulltext_id != 1 and crawl_id = %s;""", (c.crawl_id,))
 
         # DEDUP ON DOMAIN LEVEL
         # GROUP BY domainid and fulltext_id, select item with lowest ID
