@@ -276,6 +276,7 @@ def detect_near_duplicates():
         # create partition
         with con.cursor() as cur:
             cur.execute("CREATE TABLE new_docs_3_bits_maalfrid_%s PARTITION OF new_docs_3_bits FOR VALUES IN (%s);", (c.crawl_id,c.crawl_id))
+        con.commit()
 
         for domain in domains:
             print(domain)
@@ -287,8 +288,8 @@ def detect_near_duplicates():
                     new_docs = run_near_duplicate_detection(domain=domain[1], content_type=content_type)
 
                     if new_docs:
-                        with db_connect() as write_con:
-                            write_new_docs_to_db(write_con, new_docs=new_docs)
+                        write_new_docs_to_db(con, new_docs=new_docs)
+                        con.commit()
 
 def langdet_wrapper(args): 
     fulltext_id = args[0]
