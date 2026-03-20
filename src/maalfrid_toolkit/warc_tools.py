@@ -1,3 +1,7 @@
+import json
+from urllib.parse import urlparse
+import pygtrie
+from collections import Counter
 import argparse
 from maalfrid_toolkit.notram_avisleser import get_text_fitz
 import maalfrid_toolkit.htmlclean as htmlclean
@@ -227,6 +231,117 @@ def count_filtered_records(stream, content_types=["text/html"], arc2warc=False):
         count += 1
     return count
 
+## CDX tools
+def normalize_mime(mime):
+    # we lowercase and split at ; to remove optional charset info
+    mime = mime.lower().split(';')[0].strip()
+    if 'text/html' in mime:
+        return 'HTML'
+    if 'application/pdf' in mime:
+        return 'PDF'
+    word_mimes = [
+        'application/msword',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'application/vnd.oasis.opendocument.text-master'
+    ]
+    if any(m in mime for m in word_mimes):
+        return 'WORD'
+    return 'OTHER'
+
+def parse_cdx_line(line):
+    parts = line.strip().split(' ', 2)
+    if len(parts) < 3: return None
+    
+    # detect Browsertrix (CDXJ)
+    if parts[2].startswith('{'):
+        try:
+            data = json.loads(parts[2])
+            if data.get('status') == '200':
+                return data.get('url'), data.get('mime')
+        except json.JSONDecodeError: return None
+    
+    # detect wget
+    else:
+        parts = line.split()
+        response = parts[4]
+        if response == '200':
+            url = parts[0]
+            mime = parts[3]
+            return url, mime
+    return None
+
+def cdx_summarizer(args):
+    path = args.file
+    max_level = args.depth
+    show_leaves = args.leaf_nodes
+
+    urlTrie = pygtrie.StringTrie(separator="/")
+    global_stats = Counter()
+
+    with open(path, 'r') as f:
+        for line in f:
+            # Skip header
+            if line.startswith(' CDX'): 
+                continue
+            
+            parsed = parse_cdx_line(line)
+            if not parsed: 
+                continue
+            
+            url, raw_mime = parsed
+            o = urlparse(url)
+            mime_label = normalize_mime(raw_mime)
+
+            # Track global stats for summary
+            global_stats[mime_label] += 1
+
+            # Clean trailing slashes to avoid empty segments
+            path_clean = o.path.strip('/')
+            
+            # Build path segments: netloc/path/to/page
+            segments = [o.netloc] + [p for p in path_clean.split('/') if p]
+            
+            # Update every prefix in the trie so parents aggregate counts
+            for i in range(1, len(segments) + 1):
+                current_path = "/".join(segments[:i])
+                if current_path not in urlTrie:
+                    urlTrie[current_path] = Counter()
+                urlTrie[current_path][mime_label] += 1
+
+    total_200s = sum(global_stats.values())
+    print("=== CDX SUMMARY ===")
+    print(f"FILE: {args.file}")
+    print(f"Total responses with status 200: {total_200s}")
+    for label, count in sorted(global_stats.items()):
+        print(f"{label}: {count}")
+    print("=====================")
+
+    # Print the tree
+    for p_key, counts in urlTrie.iteritems():
+        segments = p_key.split('/')
+        depth = len(segments) - 1
+        
+        if depth > max_level: 
+            continue
+
+        # Skip leaf nodes if not specified
+        # depth == 0 is always shown as it is the HOST
+        if not show_leaves and depth > 0 and not urlTrie.has_subtrie(p_key):
+            continue
+
+        if depth == 0:
+            indent = ""
+            prefix = "\nHOST "
+        else:
+            indent = "|   " * (depth - 1)
+            prefix = "|-- "
+        
+        # Sort labels
+        stats_list = [f"{k}:{v}" for k, v in sorted(counts.items())]
+        stats_str = ", ".join(stats_list)
+        
+        print(f"{indent}{prefix}{segments[-1]} ({stats_str})")
+
 def main():
     # Parse commandline
     parser = argparse.ArgumentParser(
@@ -236,9 +351,13 @@ def main():
 
     parser_ls = subparsers.add_parser("ls", help="Iterate over and list the contents of a WARC file.")
     parser_browsertrix_dedup = subparsers.add_parser("browsertrix_dedup", help="Validate and deduplicate the contents of one or more WARC files produced by browsertrix.")
+    parser_cdx_summarizer = subparsers.add_parser("cdx_summarize", help="Parse and summarize CDX files produced by Wget and Browsertrix.")
 
     parser_ls.add_argument("--file", type=str, help="Path to WARC file.")
     parser_browsertrix_dedup.add_argument("--files", type=str, nargs='+', help="Paths to the WARC files.")
+    parser_cdx_summarizer.add_argument("--file", type=str, help="Path to the CDX file")
+    parser_cdx_summarizer.add_argument("--depth", type=int, default=12, help="Levels to show")
+    parser_cdx_summarizer.add_argument("--leaf_nodes", type=int, default=False, help="Show leaf nodes")
 
     args = parser.parse_args()
 
@@ -255,6 +374,8 @@ def main():
         elif args.command == "browsertrix_dedup":
             warc_dedup(args.files)
             pass
+        elif args.command == "cdx_summarize":
+            cdx_summarizer(args)
     else:
         parser.print_help()
 
