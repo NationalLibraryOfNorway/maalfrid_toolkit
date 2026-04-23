@@ -27,8 +27,6 @@ dependencies = [
     "warcio>=1.7.4",
     "psycopg2-binary>=2.9.10",
     "PyMuPDF==1.23.26",
-    "pdfminer-six==20201018",
-    "sentence-splitter==1.4",
     "joblib>=1.5.3",
     "tqdm>=4.67.1",
     "python-docx==1.2.0",
