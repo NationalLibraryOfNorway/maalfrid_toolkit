@@ -109,6 +109,9 @@ def test_maalfrid_record_get_title(load_html_warc):
         )
 
 def test_maalfrid_record_estimate_date(load_html_warc):
+    # this will skip the test if the optional dependency htmldate is missing
+    pytest.importorskip("htmldate")
+
     for record in warc_tools.filter_warc(load_html_warc, content_types=["text/html"]):
         maalfrid_record = warc_tools.convert_to_maalfrid_record(
             record, warc_file_name="testfiles/html.warc.gz", calculate_simhash=True
