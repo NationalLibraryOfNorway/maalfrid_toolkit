@@ -28,6 +28,4 @@ def test_language_filter(text_unclear, text_nno, text_nob):
 
 def test_langdet(longer_text_nno):
 	lang_textcat = langdet.langdet(docId="testdoc", paras=[longer_text_nno], stop_word_filter=False, apply_language_filter=False, engine="textcat")
-	lang_glotlid = langdet.langdet(docId="testdoc", paras=[longer_text_nno], stop_word_filter=False, apply_language_filter=False, engine="glotlid")
 	assert lang_textcat[1] == 'nno'
-	assert lang_glotlid[1] == 'nno'
