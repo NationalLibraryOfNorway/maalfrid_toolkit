@@ -13,9 +13,7 @@ def _extract_text_from_doc(file_path):
         return result.stdout
     except FileNotFoundError:
         print("antiword is not installed. Please install it first.")
-        raise e
-    except Exception as e:
-        raise e
+        raise
     
 def _extract_text_from_docx(file_path) -> str:
     return docx2txt.process(file_path)
