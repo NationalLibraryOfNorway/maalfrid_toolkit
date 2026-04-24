@@ -58,4 +58,4 @@ sslcert = os.getenv("MAALFRID_TOOLKIT_POSTGRES_SSLCERT", "")
 sslkey = os.getenv("MAALFRID_TOOLKIT_POSTGRES_SSLKEY", "")
 
 # stopword filter
-stopword_filters = ['Arabic', 'Danish', 'German', 'English', 'Estonian', 'Persian', 'Finnish', 'French', 'Icelandic', 'Italian', 'Norwegian_NRK', 'Norwegian_NRK', 'Polish', 'Romanian', 'Russian', 'sma', 'sme', 'smj', 'smn', 'sms', 'Somali', 'Spanish', 'Swedish', 'Turkish', 'Urdu', 'Vietnamese']
+stopword_filters = ['Arabic', 'Danish', 'German', 'English', 'Estonian', 'Persian', 'Finnish', 'French', 'Icelandic', 'Italian', 'Norwegian_NRK', 'Polish', 'Romanian', 'Russian', 'sma', 'sme', 'smj', 'smn', 'sms', 'Somali', 'Spanish', 'Swedish', 'Turkish', 'Urdu', 'Vietnamese']
