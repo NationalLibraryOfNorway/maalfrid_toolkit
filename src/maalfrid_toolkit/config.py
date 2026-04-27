@@ -33,7 +33,7 @@ JUSTEXT_CONFIG_SETS = { "precision": JUSTEXT_CONFIG_PRECISION, "recall": JUSTEXT
 
 # DIR
 current_dir = os.path.dirname(os.path.abspath(__file__))
-output_dir = os.path.dirname(os.path.abspath(__file__))
+output_dir = os.getenv("MAALFRID_TOOLKIT_OUTPUT_DIR", current_dir)
 JUSTEXT_STOPLISTS_DIR = os.path.join(current_dir, 'models/stoplists_justext/')
 
 # Other
