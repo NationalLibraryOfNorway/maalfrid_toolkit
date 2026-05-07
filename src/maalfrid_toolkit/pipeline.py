@@ -7,18 +7,21 @@ import maalfrid_toolkit.crawl as crawl
 import maalfrid_toolkit.warc_tools as wt
 import maalfrid_toolkit.langdet as langdet
 import maalfrid_toolkit.htmlclean as htmlclean
+from maalfrid_toolkit.simhash_docs import build_index
 from maalfrid_toolkit.utils import return_all_stop_words
 import json
 import time
 from tqdm import tqdm
 import logging
 import os
+from simhash import Simhash
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 stop_words = return_all_stop_words()
 hashes = set()
+simhash_index = build_index([])
 
 def create_document(paragraphs, langStr):
     rows = []
@@ -131,7 +134,7 @@ def parse_args():
     parser.add_argument( '--mode', choices=['precision', 'recall'], default='precision', help='Choose HTML content extraction mode (default: precision)' )
     parser.add_argument('--use_lenient_html_parser', action='store_true', help="Use a lenient HTML parser to fix broken HTML (more expensive).")
     parser.add_argument('--calculate_simhash', action='store_true', help="Calculate simhash for each record.")
-    parser.add_argument('--dedup', action='store_true', help='Do not count exact text duplicates (when using WARC file)')
+    parser.add_argument('--dedup', action='store_true', help='Do not count exact duplicates, or near duplicates when combined with --calculate_simhash (when using WARC file)')
     parser.add_argument('--content_type', type=str, help='Content type to filter on')
     parser.add_argument('--lid_engine', type=str, default="textcat", help='Default engine for language identification')
     parser.add_argument('--verbose', action='store_true', help="Print language statistics for each response.")
@@ -195,9 +198,12 @@ def run(args):
                     if args.dedup == True:
                         if maalfrid_record.full_text_hash in hashes:
                             continue
-                        else:
-                            hashes.add(maalfrid_record.full_text_hash)
-                            pass
+                        if args.calculate_simhash and maalfrid_record.simhash_value is not None:
+                            simhash = Simhash(int(maalfrid_record.simhash_value))
+                            if simhash_index.get_near_dups(simhash):
+                                continue
+                            simhash_index.add(maalfrid_record.full_text_hash, simhash)
+                        hashes.add(maalfrid_record.full_text_hash)
 
                     langStr = document_pipeline(maalfrid_record)
                     if langStr:
