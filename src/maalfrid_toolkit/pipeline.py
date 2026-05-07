@@ -20,8 +20,6 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 stop_words = return_all_stop_words()
-hashes = set()
-simhash_index = build_index([])
 
 def create_document(paragraphs, langStr):
     rows = []
@@ -150,6 +148,8 @@ def parse_args():
 
 def run(args):
     rows = []
+    hashes = set()
+    simhash_index = build_index([])
 
     if args.url:
         url = args.url
@@ -199,7 +199,7 @@ def run(args):
                         if maalfrid_record.full_text_hash in hashes:
                             continue
                         if args.calculate_simhash and maalfrid_record.simhash_value is not None:
-                            simhash = Simhash(int(maalfrid_record.simhash_value))
+                            simhash = Simhash(maalfrid_record.simhash_value)
                             if simhash_index.get_near_dups(simhash):
                                 continue
                             simhash_index.add(maalfrid_record.full_text_hash, simhash)
