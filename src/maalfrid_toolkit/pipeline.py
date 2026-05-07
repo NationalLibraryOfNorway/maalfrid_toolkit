@@ -149,7 +149,7 @@ def parse_args():
 def run(args):
     rows = []
     hashes = set()
-    simhash_index = build_index([])
+    simhash_index = build_index([]) if args.dedup and args.calculate_simhash else None
 
     if args.url:
         url = args.url
@@ -202,7 +202,7 @@ def run(args):
                             simhash = Simhash(maalfrid_record.simhash_value)
                             if simhash_index.get_near_dups(simhash):
                                 continue
-                            simhash_index.add(maalfrid_record.full_text_hash, simhash)
+                            simhash_index.add(maalfrid_record.rec_headers.get('WARC-Record-ID') or maalfrid_record.full_text_hash, simhash)
                         hashes.add(maalfrid_record.full_text_hash)
 
                     langStr = document_pipeline(maalfrid_record)
