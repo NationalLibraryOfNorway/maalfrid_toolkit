@@ -199,10 +199,10 @@ def run(args):
                         if maalfrid_record.full_text_hash in hashes:
                             continue
                         if args.calculate_simhash and maalfrid_record.simhash_value is not None:
-                            simhash = Simhash(maalfrid_record.simhash_value)
+                            simhash = Simhash(value=maalfrid_record.simhash_value)
                             if simhash_index.get_near_dups(simhash):
                                 continue
-                            simhash_index.add(maalfrid_record.rec_headers.get('WARC-Record-ID') or maalfrid_record.full_text_hash, simhash)
+                            simhash_index.add(maalfrid_record.rec_headers.get('WARC-Record-ID') or f"{maalfrid_record.url}:{maalfrid_record.full_text_hash}", simhash)
                         hashes.add(maalfrid_record.full_text_hash)
 
                     langStr = document_pipeline(maalfrid_record)
