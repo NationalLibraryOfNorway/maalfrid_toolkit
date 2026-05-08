@@ -184,8 +184,10 @@ def run(args):
 
                 # Reset file pointer for reuse
                 stream.seek(0)
-                    
+                     
                 for record in tqdm(wt.filter_warc(stream, content_types, arc2warc=True), total=total_count,  desc=os.path.basename(warc_file)):
+                    simhash = None
+                    simhash_key = None
                     maalfrid_record = wt.convert_to_maalfrid_record(record, warc_file_name=args.warc_file, use_lenient_html_parser=args.use_lenient_html_parser, calculate_simhash=args.calculate_simhash, mode=args.mode)
                     maalfrid_record.extract_full_text()
 
@@ -203,11 +205,13 @@ def run(args):
                             if simhash_index.get_near_dups(simhash):
                                 continue
                             simhash_key = maalfrid_record.rec_headers.get('WARC-Record-ID') or f"{maalfrid_record.url}:{maalfrid_record.full_text_hash}"
-                            simhash_index.add(simhash_key, simhash)
-                        hashes.add(maalfrid_record.full_text_hash)
 
                     langStr = document_pipeline(maalfrid_record)
                     if langStr:
+                        if args.dedup == True:
+                            hashes.add(maalfrid_record.full_text_hash)
+                            if simhash != None:
+                                simhash_index.add(simhash_key, simhash)
                         rows.append(aggregate_statistics(langStr))
 
     if not args.to_jsonl:
