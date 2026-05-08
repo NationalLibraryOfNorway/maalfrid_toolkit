@@ -208,9 +208,9 @@ def run(args):
 
                     langStr = document_pipeline(maalfrid_record)
                     if langStr:
-                        if args.dedup == True:
+                        if args.dedup:
                             hashes.add(maalfrid_record.full_text_hash)
-                            if simhash != None:
+                            if simhash is not None:
                                 simhash_index.add(simhash_key, simhash)
                         rows.append(aggregate_statistics(langStr))
 
