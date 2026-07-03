@@ -8,6 +8,7 @@ import maalfrid_toolkit.htmlclean as htmlclean
 import maalfrid_toolkit.msword
 from maalfrid_toolkit.utils import detect_and_decode, return_all_stop_words
 from maalfrid_toolkit.simhash_docs import compute_simhash
+import maalfrid_toolkit.config as c
 from warcio.recordloader import ArcWarcRecord
 from warcio.archiveiterator import ArchiveIterator
 from warcio.warcwriter import WARCWriter
@@ -17,6 +18,7 @@ from io import BytesIO
 import hashlib
 import uuid
 import requests
+from requests.exceptions import RequestException
 import copy
 import logging
 
@@ -157,10 +159,21 @@ class MaalfridWarcRecord(ArcWarcRecord):
 def convert_to_maalfrid_record(arc_warc_record, warc_file_id=None, warc_file_name=None, use_lenient_html_parser=False, calculate_simhash=False, mode="precision"):
     return MaalfridWarcRecord(arc_warc_record.format, arc_warc_record.rec_type, arc_warc_record.rec_headers, arc_warc_record.raw_stream, arc_warc_record.http_headers, arc_warc_record.content_type, arc_warc_record.length, warc_file_id=warc_file_id, warc_file_name=warc_file_name, use_lenient_html_parser=use_lenient_html_parser, calculate_simhash=calculate_simhash, mode=mode)
 
-def make_request(url):
+def make_request(url, timeout=10):
+    headers = {}
+    # set user agent
+    headers["User-Agent"] = c.user_agent
+
     try:
-        response = requests.get(url)
-    except:
+        # Explicit timeout to prevent hanging forever
+        response = requests.get(url, headers=headers, timeout=timeout)
+        
+        # Raises an HTTPError if the status code is 4xx or 5xx
+        response.raise_for_status() 
+        
+    except RequestException as e:
+        # Catches connection, timeout, and HTTP errors safely
+        print(f"Request failed: {e}")
         response = None
         
     return response
