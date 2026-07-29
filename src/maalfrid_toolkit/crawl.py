@@ -164,6 +164,8 @@ def run_browsertrix(crawljob_config):
 
         files = os.listdir(path_to_browsertrix_folder)
 
+        print("domain %s: moving WARC/CDX files to finished folder" % (crawljob_config["domain"]))
+
         for file in files:
             path_to_warc_file = os.path.join(path_to_browsertrix_folder, file)
             if file.startswith(collection_name):
@@ -213,9 +215,11 @@ def run_wget(crawljob_config):
 
     path_to_crawljobs_folder = os.path.join(c.current_dir, "crawljobs")
 
+    path_to_tempstore_folder = "%s/tempstore/%s" % (path_to_output_folder, warc_filename)
+
     # initiate wget using subprocess
     try:
-        args = [c.wget_location, '--config=%s/wget_warc.conf' % (path_to_crawljobs_folder), '--level=%s' % (crawljob_config["crawl_depth"]), *([span_hosts_clause] if span_hosts_clause else []), *([robotstxt_clause] if robotstxt_clause else []), '-P%s/tempstore' % (path_to_output_folder), '-D%s' % (crawljob_config["domain"]), *([exclude_subdomains_clause] if exclude_subdomains_clause else []), *([exclude_paths_clause] if exclude_paths_clause else []), *([exclude_urls_clause] if exclude_urls_clause else []), '--warc-file=%s/%s' % (path_to_output_folder, warc_filename), crawljob_config["seed"]]
+        args = [c.wget_location, '--config=%s/wget_warc.conf' % (path_to_crawljobs_folder), '--level=%s' % (crawljob_config["crawl_depth"]), *([span_hosts_clause] if span_hosts_clause else []), *([robotstxt_clause] if robotstxt_clause else []), '-P%s' % (path_to_tempstore_folder), '-D%s' % (crawljob_config["domain"]), *([exclude_subdomains_clause] if exclude_subdomains_clause else []), *([exclude_paths_clause] if exclude_paths_clause else []), *([exclude_urls_clause] if exclude_urls_clause else []), '--warc-file=%s/%s' % (path_to_output_folder, warc_filename), crawljob_config["seed"]]
 
         # write log entry
         event_start_log = {"instance_id": instance_id, "crawler": "wget", "jobid": crawljob_config["jobid"], "domain": crawljob_config["domain"], "event": "start", "timestamp": timestamp_string, "args": ' '.join(args)}
@@ -254,12 +258,20 @@ def run_wget(crawljob_config):
             f.write(json.dumps(event_end_log) + "\n")
 
         # find files
+        print("domain %s: moving WARC/CDX files to finished folder" % (crawljob_config["domain"]))
         wget_files = os.listdir(path_to_output_folder)
 
         for wget_file in wget_files:
             path_to_wget_file = os.path.join(path_to_output_folder, wget_file)
             if wget_file.startswith(warc_filename):
                 shutil.move(path_to_wget_file, path_to_finished_folder)
+
+        # remove tempstore (this may take some time for large domains)
+        try:
+            print("domain %s: cleaning tempstore" % (crawljob_config["domain"]))
+            shutil.rmtree(path_to_tempstore_folder)
+        except FileNotFoundError:
+            print("domain %s: could not remove tempstore folder %s (was never created?)" % (crawljob_config["domain"], path_to_tempstore_folder))
 
 def run():
     # take configuration from argument
