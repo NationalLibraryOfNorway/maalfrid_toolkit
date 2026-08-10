@@ -17,6 +17,27 @@ def get_html(url):
     else:
         return None
 
+def clean_tree(tree):
+    # we look for certain keywords hinting at navigation, sidebars, ads, consent/cookie banners and newsletters
+    # keywords inspired by: https://naman.so/blog/simhash-web-crawl-caching
+    keywords = ['nav', 'menu', 'sidebar', 'advertisement', 'ad-', 'social', 'share', 'consent', 'comment-form', 'cookie', 'popup', 'modal', 'newsletter', 'privacy']
+
+    conditions = []
+    for name in keywords:
+        conditions.append(f"contains(@class, '{name}')")
+        conditions.append(f"contains(@id, '{name}')")
+
+    # we build an XPath matching these keywords in class and id names    
+    xpath_expr = f"//*[{' or '.join(conditions)}]"
+    
+    # for each match in the tree
+    for element in tree.xpath(xpath_expr):
+        # check if the element hasn't already been removed by a parent deletion, otherwise remove
+        if element.getparent() is not None:
+            element.drop_tree()
+    
+    return tree
+
 def get_lxml_tree(utf_stream: bytes, use_lenient_html_parser: bool=False):
     """ Takes a binary string, return a lxml tree for justext (optional: Use a lenient parser to fix broken HTML) """
 
@@ -43,6 +64,10 @@ def get_lxml_tree(utf_stream: bytes, use_lenient_html_parser: bool=False):
         tree = lxml.html.fromstring(utf_string)
     except ValueError:
         tree = lxml.html.fromstring(utf_stream)
+
+    # we do some basic cleaning of the tree before handing it to justext to account for cookie-banners, newsletters etc.
+    tree = clean_tree(tree)
+
     return tree
 
 def get_title(tree):
