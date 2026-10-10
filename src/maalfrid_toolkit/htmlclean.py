@@ -23,7 +23,7 @@ def get_lxml_tree(utf_stream: bytes, use_lenient_html_parser: bool=False):
     if not isinstance(utf_stream, (bytes, bytearray)):
         raise TypeError(f"utf_stream must be bytes, not {type(utf_stream).__name__}")
 
-    utf_string = detect_and_decode(utf_stream)
+    utf_string, detected_encoding = detect_and_decode(utf_stream, is_html=True)
 
     # try to detect XHTML
     looks_like_xhtml = utf_string.lstrip().startswith("<?xml")

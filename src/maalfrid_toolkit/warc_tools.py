@@ -6,7 +6,7 @@ import argparse
 from maalfrid_toolkit.notram_avisleser import get_text_fitz
 import maalfrid_toolkit.htmlclean as htmlclean
 import maalfrid_toolkit.msword
-from maalfrid_toolkit.utils import detect_and_decode, return_all_stop_words
+from maalfrid_toolkit.utils import return_all_stop_words
 from maalfrid_toolkit.simhash_docs import compute_simhash
 import maalfrid_toolkit.config as c
 from warcio.recordloader import ArcWarcRecord
