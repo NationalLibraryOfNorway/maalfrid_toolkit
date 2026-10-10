@@ -4,18 +4,8 @@ import logging
 import os
 import maalfrid_toolkit.config as c
 
-# Create a logger for bs4 to capture warnings from UnicodeDammit
-logger = logging.getLogger("bs4")
-logger.setLevel(logging.WARNING)
-
-# Capture warnings into a list
-captured = []
-
-class ListHandler(logging.Handler):
-    def emit(self, record):
-        captured.append(self.format(record))
-
-logger.addHandler(ListHandler())
+# Create a logger
+logger = logging.getLogger(__name__)
 
 # Helper functions adapted from the Justext package for loading stoplists outside of the Justext package
 def get_stoplists():
